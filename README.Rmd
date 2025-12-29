@@ -80,6 +80,6 @@ install.packages("renv")
 Restore the project library using [renv.lock](renv.lock)
 
 ```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
-renv::restore
+renv::restore()
 ```
 
