@@ -1,0 +1,102 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# Systematic measurment changes: A simulation study
+
+<!-- badges: start -->
+
+<!-- badges: end -->
+
+This repository contains the code to reproduce the simulation study in
+the paper  
+*“Assessing systematic changes in measurements across a data collection:
+A simulation study”*.
+
+The study compares seven statistical methods for quantifying systematic
+changes in measurements across different settings:  
+- Autoregressive integrated moving average (ARIMA)  
+- Fused lasso signal approximator (FLSA)  
+- Generalized additive model (GAM)  
+- Locally weighted scatterplot smoothing (LOWESS)  
+- Moving average (MA)  
+- Pruned exact linear time (PELT)  
+- Piecewise regression (PR)
+
+The simulation results can be interactively explored via an accompanying
+[Shiny application](https://measurement-heterogeneity.bips.eu/).
+
+## 📁 Repository structure
+
+- `01_simulation_study.R`: Runs the simulation study using the
+  `batchtools` R package. Results are saved in
+  [res.rds](results/res.rds)
+- `02_visualisations.R`: Generates [figures](results/figures) and
+  [tables](results/tables) for the main manuscript and
+  [supplementary_data_1.pdf](results/supplementary_data_1.pdf).
+- `03_supplementary_data_2.R`: Creates the supplementary Excel file
+  [supplementary_data_2.xlsx](results/supplementary_data_2.xlsx)
+  containing bias and mean squared error for different settings.
+- `04_supplementary_data_3.Rmd`: R Markdown to create
+  [supplementary_data_3.pdf](results/supplementary_data_3.pdf) with the
+  output from the [Shiny
+  application](https://measurement-heterogeneity.bips.eu/).
+- `functions/`: Contains function definitions for
+  [01_simulation_study.R](01_simulation_study.R):
+  - [algorithms.R](functions/algorithms.R): Statistical methods
+  - [problems.R](functions/problems.R): Simulation settings
+- `renv.lock`: Records package versions.
+- `results/`: Contains all outputs of the simulation study, including
+  figures, tables, and supplementary data. Raw results are stored in
+  [res.rds](results/res.rds).
+
+## 🚀 Reproducing the results
+
+To reproduce the simulation study run
+[01_simulation_study.R](01_simulation_study.R). This performs the
+simulation study and saves the results under `results/res.rds`.
+
+To recreate the figures and tables for the main manuscript and
+[supplementary_data_1.pdf](results/supplementary_data_1.pdf) run
+[02_visualisations.R](02_visualisations.R). This saves the figures and
+supplementary figures under `results/figures` and the tables under
+`results/tables`. To recreate
+[supplementary_data_2.xlsx](results/supplementary_data_2.xlsx) and
+[supplementary_data_3.pdf](results/supplementary_data_3.pdf) run
+[03_supplementary_data_2.R](03_supplementary_data_2.R) and
+[04_supplementary_data_3.Rmd](04_supplementary_data_3.Rmd),
+respectively. Note that it is not necessary to run the simulation study
+to create the figures, tables and supplementary data. The results from
+the simulation study are already stored under `results/res.rds`.
+
+## 📚 R environment
+
+This project uses the `renv` R package to ensure reproducible R
+environments. The exact package version used for the simulation study
+are recorded in [renv.lock](renv.lock). To restore the environment and
+install all required packages:
+
+### 1. Clone the repository
+
+Clone the repository (or download the ZIP) to save
+[renv.lock](renv.lock) locally.
+
+### 2. Open the project
+
+Open the project in R (e.g. in RStudio). Make sure
+[renv.lock](renv.lock) is in the project root directory.
+
+### 3. Install renv
+
+Install `renv` if not already installed.
+
+``` r
+install.packages("renv")
+```
+
+### 4. Restore project library
+
+Restore the project library using [renv.lock](renv.lock)
+
+``` r
+renv::restore
+```
