@@ -27,6 +27,14 @@ The simulation results can be interactively explored via an accompanying
 
 ## 📁 Repository structure
 
+- `functions/`: Contains function definitions for
+  [01_simulation_study.R](01_simulation_study.R):
+  - [algorithms.R](functions/algorithms.R): Statistical methods
+  - [problems.R](functions/problems.R): Simulation settings  
+- `renv/`: Contains project-specific environment configuration files.
+- `results/`: Contains all outputs of the simulation study, including
+  figures, tables, and supplementary data. Raw results are stored in
+  [res.rds](results/res.rds).  
 - `01_simulation_study.R`: Runs the simulation study using the
   `batchtools` R package. Results are saved in
   [res.rds](results/res.rds)
@@ -40,33 +48,30 @@ The simulation results can be interactively explored via an accompanying
   [supplementary_data_3.pdf](results/supplementary_data_3.pdf) with the
   output from the [Shiny
   application](https://measurement-heterogeneity.bips.eu/).
-- `functions/`: Contains function definitions for
-  [01_simulation_study.R](01_simulation_study.R):
-  - [algorithms.R](functions/algorithms.R): Statistical methods
-  - [problems.R](functions/problems.R): Simulation settings
 - `renv.lock`: Records package versions.
-- `results/`: Contains all outputs of the simulation study, including
-  figures, tables, and supplementary data. Raw results are stored in
-  [res.rds](results/res.rds).
 
 ## 🚀 Reproducing the results
 
-To reproduce the simulation study run
-[01_simulation_study.R](01_simulation_study.R). This performs the
-simulation study and saves the results under `results/res.rds`.
+To reproduce the simulation study, run
+[01_simulation_study.R](01_simulation_study.R). This executes the
+simulations and saves the results to `results/res.rds`.
 
 To recreate the figures and tables for the main manuscript and
-[supplementary_data_1.pdf](results/supplementary_data_1.pdf) run
+[supplementary_data_1.pdf](results/supplementary_data_1.pdf), run
 [02_visualisations.R](02_visualisations.R). This saves the figures and
 supplementary figures under `results/figures` and the tables under
-`results/tables`. To recreate
+`results/tables`.
+
+To recreate the supplementary files
 [supplementary_data_2.xlsx](results/supplementary_data_2.xlsx) and
-[supplementary_data_3.pdf](results/supplementary_data_3.pdf) run
+[supplementary_data_3.pdf](results/supplementary_data_3.pdf), run
 [03_supplementary_data_2.R](03_supplementary_data_2.R) and
 [04_supplementary_data_3.Rmd](04_supplementary_data_3.Rmd),
-respectively. Note that it is not necessary to run the simulation study
-to create the figures, tables and supplementary data. The results from
-the simulation study are already stored under `results/res.rds`.
+respectively.
+
+> Note: It is **not necessary** to run the simulation study to create
+> the figures, tables, or supplementary data, as the results are already
+> stored in `results/res.rds`.
 
 ## 📚 R environment
 
