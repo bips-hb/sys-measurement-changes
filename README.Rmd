@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Systematic measurment changes: A simulation study
+# Systematic measurement changes: A simulation study
 
 <!-- badges: start -->
 <!-- badges: end -->

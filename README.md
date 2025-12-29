@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Systematic measurment changes: A simulation study
+# Systematic measurement changes: A simulation study
 
 <!-- badges: start -->
 
