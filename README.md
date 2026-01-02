@@ -23,7 +23,9 @@ changes in measurements across different settings:
 - Piecewise regression (PR)
 
 The simulation results can be interactively explored via an accompanying
-[Shiny application](https://measurement-heterogeneity.bips.eu/).
+[Shiny application](https://sys-measurement-changes.bips.eu/). The
+source code for the app is available in a separate [GitHub
+repository](https://github.com/bips-hb/shiny-sys-measurement-changes).
 
 ## 📁 Repository structure
 
@@ -47,7 +49,7 @@ The simulation results can be interactively explored via an accompanying
 - `04_supplementary_data_3.Rmd`: R Markdown to create
   [supplementary_data_3.pdf](results/supplementary_data_3.pdf) with the
   output from the [Shiny
-  application](https://measurement-heterogeneity.bips.eu/).
+  application](https://sys-measurement-changes.bips.eu/).
 - `renv.lock`: Records package versions.
 
 ## 🚀 Reproducing the results

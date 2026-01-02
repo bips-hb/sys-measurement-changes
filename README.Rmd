@@ -29,7 +29,7 @@ The study compares seven statistical methods for quantifying systematic changes 
 - Pruned exact linear time (PELT)  
 - Piecewise regression (PR)
 
-The simulation results can be interactively explored via an accompanying [Shiny application](https://measurement-heterogeneity.bips.eu/).
+The simulation results can be interactively explored via an accompanying [Shiny application](https://sys-measurement-changes.bips.eu/). The source code for the app is available in a separate [GitHub repository](https://github.com/bips-hb/shiny-sys-measurement-changes).
 
 ## 📁 Repository structure
 
@@ -41,7 +41,7 @@ The simulation results can be interactively explored via an accompanying [Shiny 
 - `01_simulation_study.R`: Runs the simulation study using the `batchtools` R package. Results are saved in [res.rds](results/res.rds)
 - `02_visualisations.R`: Generates [figures](results/figures) and [tables](results/tables) for the main manuscript and [supplementary_data_1.pdf](results/supplementary_data_1.pdf).
 - `03_supplementary_data_2.R`: Creates the supplementary Excel file [supplementary_data_2.xlsx](results/supplementary_data_2.xlsx) containing bias and mean squared error for different settings.
-- `04_supplementary_data_3.Rmd`: R Markdown to create [supplementary_data_3.pdf](results/supplementary_data_3.pdf) with the output from the [Shiny application](https://measurement-heterogeneity.bips.eu/).
+- `04_supplementary_data_3.Rmd`: R Markdown to create [supplementary_data_3.pdf](results/supplementary_data_3.pdf) with the output from the [Shiny application](https://sys-measurement-changes.bips.eu/).
 - `renv.lock`: Records package versions.
 
 ## 🚀 Reproducing the results
