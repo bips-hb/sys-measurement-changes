@@ -40,7 +40,7 @@ repository](https://github.com/bips-hb/shiny-sys-measurement-changes).
 - `01_simulation_study.R`: Runs the simulation study using the
   `batchtools` R package. Results are saved in
   [res.rds](results/res.rds)
-- `02_visualisations.R`: Generates [figures](results/figures) and
+- `02_visualizations.R`: Generates [figures](results/figures) and
   [tables](results/tables) for the main manuscript and
   [supplementary_data_1.pdf](results/supplementary_data_1.pdf).
 - `03_supplementary_data_2.R`: Creates the supplementary Excel file
@@ -60,7 +60,7 @@ simulations and saves the results to `results/res.rds`.
 
 To recreate the figures and tables for the main manuscript and
 [supplementary_data_1.pdf](results/supplementary_data_1.pdf), run
-[02_visualisations.R](02_visualisations.R). This saves the figures and
+[02_visualizations.R](02_visualizations.R). This saves the figures and
 supplementary figures under `results/figures` and the tables under
 `results/tables`.
 
@@ -78,7 +78,7 @@ respectively.
 ## 📚 R environment
 
 This project uses the `renv` R package to ensure reproducible R
-environments. The exact package version used for the simulation study
+environments. The exact package versions used for the simulation study
 are recorded in [renv.lock](renv.lock). To restore the environment and
 install all required packages:
 

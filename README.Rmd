@@ -39,7 +39,7 @@ The simulation results can be interactively explored via an accompanying [Shiny 
 - `renv/`: Contains project-specific environment configuration files.
 - `results/`: Contains all outputs of the simulation study, including figures, tables, and supplementary data. Raw results are stored in [res.rds](results/res.rds).  
 - `01_simulation_study.R`: Runs the simulation study using the `batchtools` R package. Results are saved in [res.rds](results/res.rds)
-- `02_visualisations.R`: Generates [figures](results/figures) and [tables](results/tables) for the main manuscript and [supplementary_data_1.pdf](results/supplementary_data_1.pdf).
+- `02_visualizations.R`: Generates [figures](results/figures) and [tables](results/tables) for the main manuscript and [supplementary_data_1.pdf](results/supplementary_data_1.pdf).
 - `03_supplementary_data_2.R`: Creates the supplementary Excel file [supplementary_data_2.xlsx](results/supplementary_data_2.xlsx) containing bias and mean squared error for different settings.
 - `04_supplementary_data_3.Rmd`: R Markdown to create [supplementary_data_3.pdf](results/supplementary_data_3.pdf) with the output from the [Shiny application](https://sys-measurement-changes.bips.eu/).
 - `renv.lock`: Records package versions.
@@ -49,7 +49,7 @@ The simulation results can be interactively explored via an accompanying [Shiny 
 To reproduce the simulation study, run [01_simulation_study.R](01_simulation_study.R). This executes the simulations and saves the results to `results/res.rds`.
 
 To recreate the figures and tables for the main manuscript and [supplementary_data_1.pdf](results/supplementary_data_1.pdf),
-run [02_visualisations.R](02_visualisations.R). This saves the figures and supplementary figures under `results/figures` and the tables under `results/tables`. 
+run [02_visualizations.R](02_visualizations.R). This saves the figures and supplementary figures under `results/figures` and the tables under `results/tables`. 
 
 To recreate the supplementary files  [supplementary_data_2.xlsx](results/supplementary_data_2.xlsx) and [supplementary_data_3.pdf](results/supplementary_data_3.pdf), run [03_supplementary_data_2.R](03_supplementary_data_2.R) and [04_supplementary_data_3.Rmd](04_supplementary_data_3.Rmd), respectively. 
 
@@ -57,7 +57,7 @@ To recreate the supplementary files  [supplementary_data_2.xlsx](results/supplem
 
 ## 📚 R environment
 
-This project uses the `renv` R package to ensure reproducible R environments. The exact package version used for the simulation study are recorded in [renv.lock](renv.lock). To restore the environment and install all required packages:
+This project uses the `renv` R package to ensure reproducible R environments. The exact package versions used for the simulation study are recorded in [renv.lock](renv.lock). To restore the environment and install all required packages:
 
 ### 1. Clone the repository
 
