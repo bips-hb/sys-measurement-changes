@@ -1,6 +1,6 @@
 ---
 title: "\\textbf{Supplementary data 3}"
-author: "for\\\n\\textit{Assessing systematic changes in measurements across the data collection period:}\\\n\\textit{A simulation study}"
+author: "for\\\n\\textit{Assessing systematic mesurement changes in single-wave study data:}\\\n\\textit{A simulation study}"
 output: 
   pdf_document:
     toc: true

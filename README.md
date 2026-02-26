@@ -9,11 +9,11 @@
 
 This repository contains the code to reproduce the simulation study in
 the paper  
-*“Assessing systematic changes in measurements across a data collection:
-A simulation study”*.
+*“Assessing systematic measurement changes in single-wave study data: A
+simulation study”*.
 
 The study compares seven statistical methods for quantifying systematic
-changes in measurements across different settings:  
+changes in a sequence of measurements across different settings:  
 - Autoregressive integrated moving average (ARIMA)  
 - Fused lasso signal approximator (FLSA)  
 - Generalized additive model (GAM)  
