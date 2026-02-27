@@ -728,328 +728,7 @@ print(latex_table3_lognorm,
 
 
 # Suppl. figures ---------------------------------------------------------------
-
 #* Figure S1 -------------------------------------------------------------------
-# Heatmap of the bias for range, variance, mean absolute deviation around the
-# median and number of change points across sample sizes for normally distributed
-# data.
-res_wide <- res %>%
-  dplyr::select(
-    distribution, pattern, algorithm, nobs, snr, dmaxf,
-    range_dif, var_dif, madm_dif, n_cpts_dif
-  ) %>%
-  tidyr::pivot_longer(
-    cols = ends_with("_dif"),
-    names_to = "estimand",
-    names_pattern = "(.*)_dif",
-    values_to = "dif"
-  ) %>%
-  mutate(nobs_cat = cut(nobs,
-    breaks = seq(min(nobs), max(nobs) + 10, by = 10),
-    right = FALSE,
-    labels = as.character(seq(30, max(nobs), by = 10))
-  )) %>%
-  mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
-  group_by(nobs_cat, distribution, algorithm, estimand) %>%
-  summarise(mean_dif = mean(dif), .groups = "drop") %>% # calculate group mean
-  mutate(estimand = factor(
-    estimand,
-    levels = c("range", "var", "madm", "n_cpts"),
-    labels = est_labels
-  ))
-
-plots_list <- res_wide %>%
-  filter(distribution == "norm") %>%
-  split(.$estimand) %>%
-  lapply(function(df) {
-    # Min/Max pro Facet
-    max_val <- max(abs(df$mean_dif), na.rm = TRUE)
-    min_val <- -max_val
-
-    ggplot(df, aes(x = algorithm, y = nobs_cat, fill = mean_dif)) +
-      geom_tile(color = "white") +
-      scale_fill_diverging_fixed0(
-        limits = c(min_val, max_val),
-        breaks = 3,
-        name = "Bias"
-      ) +
-      scale_y_continuous(
-        breaks = seq(100, max(df$nobs_cat), by = 100),
-        minor_breaks = seq(50, max(df$nobs_cat), by = 50),
-        expand = expansion(mult = c(0, 0))
-      ) +
-      scale_x_discrete(expand = expansion(add = 0)) +
-      theme_minimal() +
-      labs(y = "", x = "") +
-      theme(
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-        axis.ticks.x = element_blank(),
-        axis.title.x = element_text(),
-        axis.text.y = element_text(),
-        axis.ticks.y = element_line(),
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        panel.spacing = unit(1, "lines"),
-        strip.text = element_text(face = "bold"),
-        legend.title.position = "top",
-        legend.title = element_text(hjust = 0.5),
-        plot.title = element_text(hjust = 0.5)
-      ) +
-      ggtitle(paste(unique(df$estimand)))
-  })
-plots_list$Range$labels$y <- "Sample size"
-
-# combine plots
-combined_plot <- patchwork::wrap_plots(plots_list, ncol = 4) & theme(legend.position = "bottom")
-combined_plot +
-  patchwork::plot_annotation(
-    # title = "Normal distribution: Bias for the estimands",
-    theme = theme(plot.title = element_text(size = 14))
-  )
-ggsave("results/figures/FigS1_heatmap_bias_norm.png", width = 180, height = 267, units = "mm", bg = "white")
-
-
-#* Figure S2 -------------------------------------------------------------------
-# Heatmap of the mean squared error for range, variance, mean absolute deviation
-# around the median and number of change points across sample sizes for normally
-# distributed data.
-res_wide <- res %>%
-  dplyr::select(
-    distribution, pattern, algorithm, nobs, snr, dmaxf,
-    range_dif, var_dif, madm_dif, n_cpts_dif
-  ) %>%
-  tidyr::pivot_longer(
-    cols = ends_with("_dif"),
-    names_to = "estimand",
-    names_pattern = "(.*)_dif",
-    values_to = "dif"
-  ) %>%
-  mutate(nobs_cat = cut(nobs,
-    breaks = seq(min(nobs), max(nobs) + 10, by = 10),
-    right = FALSE,
-    labels = as.character(seq(30, max(nobs), by = 10))
-  )) %>%
-  mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
-  group_by(nobs_cat, distribution, algorithm, estimand) %>%
-  summarise(mean_dif = mean(dif^2), .groups = "drop") %>% # calculate group mean
-  mutate(estimand = factor(
-    estimand,
-    levels = c("range", "var", "madm", "n_cpts"),
-    labels = est_labels
-  ))
-
-plots_list <- res_wide %>%
-  filter(distribution == "norm") %>%
-  split(.$estimand) %>%
-  lapply(function(df) {
-    # Min/Max pro Facet
-    max_val <- max(df$mean_dif, na.rm = TRUE)
-    min_val <- 0
-
-    ggplot(df, aes(x = algorithm, y = nobs_cat, fill = mean_dif)) +
-      geom_tile(color = "white") +
-      scale_fill_positive_fixed0(
-        limits = c(min_val, max_val),
-        breaks = 3,
-        name = "MSE"
-      ) +
-      scale_y_continuous(
-        breaks = seq(100, max(df$nobs_cat), by = 100),
-        minor_breaks = seq(50, max(df$nobs_cat), by = 50),
-        expand = expansion(mult = c(0, 0))
-      ) +
-      scale_x_discrete(expand = expansion(add = 0)) +
-      theme_minimal() +
-      labs(y = "", x = "") +
-      theme(
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-        axis.ticks.x = element_blank(),
-        axis.title.x = element_text(),
-        axis.text.y = element_text(),
-        axis.ticks.y = element_line(),
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        panel.spacing = unit(1, "lines"),
-        strip.text = element_text(face = "bold"),
-        legend.title.position = "top",
-        legend.title = element_text(hjust = 0.5),
-        plot.title = element_text(hjust = 0.5)
-      ) +
-      ggtitle(paste(unique(df$estimand)))
-  })
-plots_list$Range$labels$y <- "Sample size"
-
-# combine plots
-combined_plot <- patchwork::wrap_plots(plots_list, ncol = 4) & theme(legend.position = "bottom")
-combined_plot +
-  patchwork::plot_annotation(
-    # title = "Normal distribution: MSE for the estimands",
-    theme = theme(plot.title = element_text(size = 14))
-  )
-ggsave("results/figures/FigS2_heatmap_mse_norm.png", width = 180, height = 267, units = "mm", bg = "white")
-
-
-#* Figure S3 -------------------------------------------------------------------
-# Heatmap of the bias for range, variance, mean absolute deviation around the
-# median and number of change points across sample sizes for log-normally
-# distributed data.
-res_wide <- res %>%
-  dplyr::select(
-    distribution, pattern, algorithm, nobs, snr, dmaxf,
-    range_dif, var_dif, madm_dif, n_cpts_dif
-  ) %>%
-  tidyr::pivot_longer(
-    cols = ends_with("_dif"),
-    names_to = "estimand",
-    names_pattern = "(.*)_dif",
-    values_to = "dif"
-  ) %>%
-  mutate(nobs_cat = cut(nobs,
-    breaks = seq(min(nobs), max(nobs) + 10, by = 10),
-    right = FALSE,
-    labels = as.character(seq(30, max(nobs), by = 10))
-  )) %>%
-  mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
-  group_by(nobs_cat, distribution, algorithm, estimand) %>%
-  summarise(mean_dif = mean(dif), .groups = "drop") %>% # calculate group mean
-  mutate(estimand = factor(
-    estimand,
-    levels = c("range", "var", "madm", "n_cpts"),
-    labels = est_labels
-  ))
-
-plots_list <- res_wide %>%
-  filter(distribution == "lognorm") %>%
-  split(.$estimand) %>%
-  lapply(function(df) {
-    # Min/Max pro Facet
-    max_val <- max(abs(df$mean_dif), na.rm = TRUE)
-    min_val <- -max_val
-
-    ggplot(df, aes(x = algorithm, y = nobs_cat, fill = mean_dif)) +
-      geom_tile(color = "white") +
-      scale_fill_diverging_fixed0(
-        limits = c(min_val, max_val),
-        breaks = 3,
-        name = "Bias"
-      ) +
-      scale_y_continuous(
-        breaks = seq(100, max(df$nobs_cat), by = 100),
-        minor_breaks = seq(50, max(df$nobs_cat), by = 50),
-        expand = expansion(mult = c(0, 0))
-      ) +
-      scale_x_discrete(expand = expansion(add = 0)) +
-      theme_minimal() +
-      labs(y = "", x = "") +
-      theme(
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-        axis.ticks.x = element_blank(),
-        axis.title.x = element_text(),
-        axis.text.y = element_text(),
-        axis.ticks.y = element_line(),
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        panel.spacing = unit(1, "lines"),
-        strip.text = element_text(face = "bold"),
-        legend.title.position = "top",
-        legend.title = element_text(hjust = 0.5),
-        plot.title = element_text(hjust = 0.5)
-      ) +
-      ggtitle(paste(unique(df$estimand)))
-  })
-plots_list$Range$labels$y <- "Sample size"
-
-# combine plots
-combined_plot <- patchwork::wrap_plots(plots_list, ncol = 4) & theme(legend.position = "bottom")
-combined_plot +
-  patchwork::plot_annotation(
-    # title = "Lognormal distribution: Bias for the estimands",
-    theme = theme(plot.title = element_text(size = 14))
-  )
-ggsave("results/figures/FigS3_heatmap_bias_lognorm.png", width = 180, height = 267, units = "mm", bg = "white")
-
-
-#* Figure S4 -------------------------------------------------------------------
-# Heatmap of the mean squared error for range, variance, mean absolute deviation
-# around the median and number of change points across sample sizes for
-# log-normally distributed data.
-res_wide <- res %>%
-  dplyr::select(
-    distribution, pattern, algorithm, nobs, snr, dmaxf,
-    range_dif, var_dif, madm_dif, n_cpts_dif
-  ) %>%
-  tidyr::pivot_longer(
-    cols = ends_with("_dif"),
-    names_to = "estimand",
-    names_pattern = "(.*)_dif",
-    values_to = "dif"
-  ) %>%
-  mutate(nobs_cat = cut(nobs,
-    breaks = seq(min(nobs), max(nobs) + 10, by = 10),
-    right = FALSE,
-    labels = as.character(seq(30, max(nobs), by = 10))
-  )) %>%
-  mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
-  group_by(nobs_cat, distribution, algorithm, estimand) %>%
-  summarise(mean_dif = mean(dif^2), .groups = "drop") %>% # calculate group mean
-  mutate(estimand = factor(
-    estimand,
-    levels = c("range", "var", "madm", "n_cpts"),
-    labels = est_labels
-  ))
-
-plots_list <- res_wide %>%
-  filter(distribution == "lognorm") %>%
-  split(.$estimand) %>%
-  lapply(function(df) {
-    # Min/Max pro Facet
-    max_val <- max(df$mean_dif, na.rm = TRUE)
-    min_val <- 0
-
-    ggplot(df, aes(x = algorithm, y = nobs_cat, fill = mean_dif)) +
-      geom_tile(color = "white") +
-      scale_fill_positive_fixed0(
-        limits = c(min_val, max_val),
-        breaks = 3,
-        name = "MSE"
-      ) +
-      scale_y_continuous(
-        breaks = seq(100, max(df$nobs_cat), by = 100),
-        minor_breaks = seq(50, max(df$nobs_cat), by = 50),
-        expand = expansion(mult = c(0, 0))
-      ) +
-      scale_x_discrete(expand = expansion(add = 0)) +
-      theme_minimal() +
-      labs(y = "", x = "") +
-      theme(
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-        axis.ticks.x = element_blank(),
-        axis.title.x = element_text(),
-        axis.text.y = element_text(),
-        axis.ticks.y = element_line(),
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        panel.spacing = unit(1, "lines"),
-        strip.text = element_text(face = "bold"),
-        legend.title.position = "top",
-        legend.title = element_text(hjust = 0.5),
-        plot.title = element_text(hjust = 0.5)
-      ) +
-      ggtitle(paste(unique(df$estimand)))
-  })
-plots_list$Range$labels$y <- "Sample size"
-
-# combine plots
-combined_plot <- patchwork::wrap_plots(plots_list, ncol = 4) & theme(legend.position = "bottom")
-combined_plot +
-  patchwork::plot_annotation(
-    # title = "Lognormal distribution: MSE for the estimands",
-    theme = theme(plot.title = element_text(size = 14))
-  )
-ggsave("results/figures/FigS4_heatmap_mse_lognorm.png", width = 180, height = 267, units = "mm", bg = "white")
-
-
-#* Figure S5 -------------------------------------------------------------------
 # Heatmap of the bias for range by systematic change pattern across sample sizes
 # for normally distributed data.
 rangedat <- res %>%
@@ -1092,10 +771,10 @@ ggplot(rangedat[rangedat$distribution == "norm", ], aes(y = nobs_cat, x = algori
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS5_heatmap_bias_norm_range.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS1_heatmap_bias_norm_range.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S6 -------------------------------------------------------------------
+#* Figure S2 -------------------------------------------------------------------
 # Heatmap of the bias for variance by systematic change pattern across sample sizes
 # for normally distributed data.
 vardat <- res %>%
@@ -1138,10 +817,10 @@ ggplot(vardat[vardat$distribution == "norm", ], aes(y = nobs_cat, x = algorithm,
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS6_heatmap_bias_norm_var.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS2_heatmap_bias_norm_var.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S7 -------------------------------------------------------------------
+#* Figure S3 -------------------------------------------------------------------
 # Heatmap of the bias for mean absolute deviation around the median by systematic
 # change pattern across sample sizes for normally distributed data.
 madmdat <- res %>%
@@ -1184,10 +863,10 @@ ggplot(madmdat[madmdat$distribution == "norm", ], aes(y = nobs_cat, x = algorith
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS7_heatmap_bias_norm_madm.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS3_heatmap_bias_norm_madm.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S8 -------------------------------------------------------------------
+#* Figure S4 -------------------------------------------------------------------
 # Heatmap of the bias for number of change points by systematic change pattern
 # across sample sizes for normally distributed data.
 ncptsdat <- res %>%
@@ -1230,10 +909,10 @@ ggplot(ncptsdat[ncptsdat$distribution == "norm", ], aes(y = nobs_cat, x = algori
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS8_heatmap_bias_norm_ncpts.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS4_heatmap_bias_norm_ncpts.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S9 -------------------------------------------------------------------
+#* Figure S5 -------------------------------------------------------------------
 # Heatmap of the mean squared error for range by systematic change pattern across
 # sample sizes for normally distributed data.
 rangedat <- res %>%
@@ -1276,10 +955,10 @@ ggplot(rangedat[rangedat$distribution == "norm", ], aes(y = nobs_cat, x = algori
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS9_heatmap_mse_norm_range.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS5_heatmap_mse_norm_range.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S10 ------------------------------------------------------------------
+#* Figure S6 -------------------------------------------------------------------
 # Heatmap of the mean squared error for variance by systematic change pattern
 # across sample sizes for normally distributed data.
 vardat <- res %>%
@@ -1322,10 +1001,10 @@ ggplot(vardat[vardat$distribution == "norm", ], aes(y = nobs_cat, x = algorithm,
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS10_heatmap_mse_norm_var.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS6_heatmap_mse_norm_var.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S11 ------------------------------------------------------------------
+#* Figure S7 -------------------------------------------------------------------
 # Heatmap of the mean squared error for mean absolute deviation around the median
 # by systematic change pattern across sample sizes for normally distributed data.
 madmdat <- res %>%
@@ -1368,10 +1047,10 @@ ggplot(madmdat[madmdat$distribution == "norm", ], aes(y = nobs_cat, x = algorith
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS11_heatmap_mse_norm_madm.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS7_heatmap_mse_norm_madm.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S12 ------------------------------------------------------------------
+#* Figure S8 -------------------------------------------------------------------
 # Heatmap of the mean squared error for number of change points by systematic
 # change pattern across sample sizes for normally distributed data.
 ncptsdat <- res %>%
@@ -1414,10 +1093,10 @@ ggplot(ncptsdat[ncptsdat$distribution == "norm", ], aes(y = nobs_cat, x = algori
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS12_heatmap_mse_norm_ncpts.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS8_heatmap_mse_norm_ncpts.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S13 ------------------------------------------------------------------
+#* Figure S9 -------------------------------------------------------------------
 # Heatmap of the bias for range by systematic change pattern across sample sizes
 # for log-normally distributed data.
 rangedat <- res %>%
@@ -1460,10 +1139,10 @@ ggplot(rangedat[rangedat$distribution == "lognorm", ], aes(y = nobs_cat, x = alg
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS13_heatmap_bias_lognorm_range.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS9_heatmap_bias_lognorm_range.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S14 ------------------------------------------------------------------
+#* Figure S10 ------------------------------------------------------------------
 # Heatmap of the bias for variance by systematic change pattern across sample sizes
 # for log-normally distributed data.
 vardat <- res %>%
@@ -1506,10 +1185,10 @@ ggplot(vardat[vardat$distribution == "lognorm", ], aes(y = nobs_cat, x = algorit
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS14_heatmap_bias_lognorm_var.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS10_heatmap_bias_lognorm_var.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S15 ------------------------------------------------------------------
+#* Figure S11 ------------------------------------------------------------------
 # Heatmap of the bias for mean absolute deviation around the median by systematic
 # change pattern across sample sizes for log-normally distributed data.
 madmdat <- res %>%
@@ -1552,10 +1231,10 @@ ggplot(madmdat[madmdat$distribution == "lognorm", ], aes(y = nobs_cat, x = algor
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS15_heatmap_bias_lognorm_madm.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS11_heatmap_bias_lognorm_madm.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S16 ------------------------------------------------------------------
+#* Figure S12 ------------------------------------------------------------------
 # Heatmap of the bias for number of change points by systematic change pattern
 # across sample sizes for log-normally distributed data.
 ncptsdat <- res %>%
@@ -1598,10 +1277,10 @@ ggplot(ncptsdat[ncptsdat$distribution == "lognorm", ], aes(y = nobs_cat, x = alg
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS16_heatmap_bias_lognorm_ncpts.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS12_heatmap_bias_lognorm_ncpts.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S17 ------------------------------------------------------------------
+#* Figure S13 ------------------------------------------------------------------
 # Heatmap of the mean squared error for range by systematic change pattern across
 # sample sizes for log-normally distributed data.
 rangedat <- res %>%
@@ -1644,10 +1323,10 @@ ggplot(rangedat[rangedat$distribution == "lognorm", ], aes(y = nobs_cat, x = alg
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS17_heatmap_mse_lognorm_range.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS13_heatmap_mse_lognorm_range.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S18 ------------------------------------------------------------------
+#* Figure S14 ------------------------------------------------------------------
 # Heatmap of the mean squared error for variance by systematic change pattern
 # across sample sizes for log-normally distributed data.
 vardat <- res %>%
@@ -1690,10 +1369,10 @@ ggplot(vardat[vardat$distribution == "lognorm", ], aes(y = nobs_cat, x = algorit
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS18_heatmap_mse_lognorm_var.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS14_heatmap_mse_lognorm_var.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S19 ------------------------------------------------------------------
+#* Figure S15 ------------------------------------------------------------------
 # Heatmap of the mean squared error for mean absolute deviation around the median
 # by systematic change pattern across sample sizes for log-normally distributed data.
 madmdat <- res %>%
@@ -1736,10 +1415,10 @@ ggplot(madmdat[madmdat$distribution == "lognorm", ], aes(y = nobs_cat, x = algor
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS19_heatmap_mse_lognorm_madm.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS15_heatmap_mse_lognorm_madm.png", width = 180, height = 267, units = "mm", bg = "white")
 
 
-#* Figure S20 ------------------------------------------------------------------
+#* Figure S16 ------------------------------------------------------------------
 # Heatmap of the mean squared error for number of change points by systematic
 # change pattern across sample sizes for log-normally distributed data.
 ncptsdat <- res %>%
@@ -1782,4 +1461,4 @@ ggplot(ncptsdat[ncptsdat$distribution == "lognorm", ], aes(y = nobs_cat, x = alg
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS20_heatmap_mse_lognorm_ncpts.png", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS16_heatmap_mse_lognorm_ncpts.png", width = 180, height = 267, units = "mm", bg = "white")

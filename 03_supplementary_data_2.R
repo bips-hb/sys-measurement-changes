@@ -166,7 +166,7 @@ wb <- openxlsx2::wb_add_worksheet(wb, "Normal Distribution") %>%
   ) %>%
   openxlsx2::wb_add_fill(
     dims = dims_header,
-    color = openxlsx2::wb_color(hex = "FF334E6F")
+    color = openxlsx2::wb_color(hex = "#001260")
   ) %>%
   openxlsx2::wb_add_font(
     dims = dims_header,
