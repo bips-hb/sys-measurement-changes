@@ -232,7 +232,7 @@ ggplot(data = syserrdata, aes(x = proportion, y = syserr)) +
   geom_hline(data = hlinedata, aes(yintercept = hline_y), color = "#AA4613", linetype = "dashed") +
   geom_text(data = vlinedata, aes(x = vline_x, y = 0.25, label = annot_text), color = "#06558B") +
   geom_text(data = hlinedata, aes(x = 0.05, y = hline_y, vjust = 1, label = annot_text), color = "#AA4613")
-ggsave("results/figures/Fig1_syschange.pdf", width = 7, height = 5, bg = "white", dpi = 300)
+ggsave("results/figures/Fig1_syschange.pdf", width = 170, height = 121, units = "mm", bg = "white", dpi = 300)
 
 
 #* Figure 2 --------------------------------------------------------------------
@@ -279,8 +279,8 @@ radar_norm_samp_mse <- radar_norm_samp %>%
   select(algorithm, nobs_cat, starts_with("MSE_"))
 
 pdf("results/figures/Fig2_radar_norm_samp.pdf",
-  width = 10,
-  height = 12
+  width = 6.69, #unit: inches (equals 170mm)
+  height = 8 #maximum height: 225mm (8.85 in) for figure and legend
 )
 # Set up plotting area
 layout(layout_matrix, heights = row_heights)
@@ -406,8 +406,8 @@ radar_lognorm_samp_bias <- radar_lognorm_samp %>%
 radar_lognorm_samp_mse <- radar_lognorm_samp %>%
   select(algorithm, nobs_cat, starts_with("MSE_"))
 pdf("results/figures/Fig3_radar_lognorm_samp.pdf",
-  width = 10,
-  height = 12
+  width = 6.69, #unit: inches (equals 170mm)
+  height = 8 #maximum height: 225mm (8.85 in) for figure and legend
 )
 # Set up plotting area
 layout(layout_matrix, heights = row_heights)
@@ -767,7 +767,7 @@ ggplot(rangedat[rangedat$distribution == "norm", ], aes(y = nobs_cat, x = algori
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS1_heatmap_bias_norm_range.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS1_heatmap_bias_norm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S2 -------------------------------------------------------------------
@@ -813,7 +813,7 @@ ggplot(vardat[vardat$distribution == "norm", ], aes(y = nobs_cat, x = algorithm,
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS2_heatmap_bias_norm_var.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS2_heatmap_bias_norm_var.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S3 -------------------------------------------------------------------
@@ -859,7 +859,7 @@ ggplot(madmdat[madmdat$distribution == "norm", ], aes(y = nobs_cat, x = algorith
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS3_heatmap_bias_norm_madm.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS3_heatmap_bias_norm_madm.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S4 -------------------------------------------------------------------
@@ -905,7 +905,7 @@ ggplot(ncptsdat[ncptsdat$distribution == "norm", ], aes(y = nobs_cat, x = algori
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS4_heatmap_bias_norm_ncpts.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS4_heatmap_bias_norm_ncpts.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S5 -------------------------------------------------------------------
@@ -951,7 +951,7 @@ ggplot(rangedat[rangedat$distribution == "norm", ], aes(y = nobs_cat, x = algori
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS5_heatmap_mse_norm_range.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS5_heatmap_mse_norm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S6 -------------------------------------------------------------------
@@ -997,7 +997,7 @@ ggplot(vardat[vardat$distribution == "norm", ], aes(y = nobs_cat, x = algorithm,
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS6_heatmap_mse_norm_var.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS6_heatmap_mse_norm_var.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S7 -------------------------------------------------------------------
@@ -1043,7 +1043,7 @@ ggplot(madmdat[madmdat$distribution == "norm", ], aes(y = nobs_cat, x = algorith
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS7_heatmap_mse_norm_madm.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS7_heatmap_mse_norm_madm.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S8 -------------------------------------------------------------------
@@ -1089,7 +1089,7 @@ ggplot(ncptsdat[ncptsdat$distribution == "norm", ], aes(y = nobs_cat, x = algori
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS8_heatmap_mse_norm_ncpts.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS8_heatmap_mse_norm_ncpts.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S9 -------------------------------------------------------------------
@@ -1135,7 +1135,7 @@ ggplot(rangedat[rangedat$distribution == "lognorm", ], aes(y = nobs_cat, x = alg
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS9_heatmap_bias_lognorm_range.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS9_heatmap_bias_lognorm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S10 ------------------------------------------------------------------
@@ -1181,7 +1181,7 @@ ggplot(vardat[vardat$distribution == "lognorm", ], aes(y = nobs_cat, x = algorit
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS10_heatmap_bias_lognorm_var.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS10_heatmap_bias_lognorm_var.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S11 ------------------------------------------------------------------
@@ -1227,7 +1227,7 @@ ggplot(madmdat[madmdat$distribution == "lognorm", ], aes(y = nobs_cat, x = algor
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS11_heatmap_bias_lognorm_madm.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS11_heatmap_bias_lognorm_madm.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S12 ------------------------------------------------------------------
@@ -1273,7 +1273,7 @@ ggplot(ncptsdat[ncptsdat$distribution == "lognorm", ], aes(y = nobs_cat, x = alg
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS12_heatmap_bias_lognorm_ncpts.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS12_heatmap_bias_lognorm_ncpts.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S13 ------------------------------------------------------------------
@@ -1319,7 +1319,7 @@ ggplot(rangedat[rangedat$distribution == "lognorm", ], aes(y = nobs_cat, x = alg
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS13_heatmap_mse_lognorm_range.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS13_heatmap_mse_lognorm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S14 ------------------------------------------------------------------
@@ -1365,7 +1365,7 @@ ggplot(vardat[vardat$distribution == "lognorm", ], aes(y = nobs_cat, x = algorit
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS14_heatmap_mse_lognorm_var.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS14_heatmap_mse_lognorm_var.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S15 ------------------------------------------------------------------
@@ -1411,7 +1411,7 @@ ggplot(madmdat[madmdat$distribution == "lognorm", ], aes(y = nobs_cat, x = algor
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS15_heatmap_mse_lognorm_madm.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS15_heatmap_mse_lognorm_madm.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S16 ------------------------------------------------------------------
@@ -1457,4 +1457,4 @@ ggplot(ncptsdat[ncptsdat$distribution == "lognorm", ], aes(y = nobs_cat, x = alg
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS16_heatmap_mse_lognorm_ncpts.pdf", width = 180, height = 267, units = "mm", bg = "white")
+ggsave("results/figures/FigS16_heatmap_mse_lognorm_ncpts.pdf", width = 170, height = 200, units = "mm", bg = "white")
