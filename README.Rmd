@@ -37,23 +37,23 @@ The simulation results can be interactively explored via an accompanying [Shiny 
   - [algorithms.R](functions/algorithms.R): Statistical methods
   - [problems.R](functions/problems.R): Simulation settings  
 - `renv/`: Contains project-specific environment configuration files.
-- `results/`: Contains all outputs of the simulation study, including figures, tables, and supplementary data. Raw results are stored in [res.rds](results/res.rds).  
+- `results/`: Contains all outputs of the simulation study, including figures, tables, and additional files. Raw results are stored in [res.rds](results/res.rds).  
 - `01_simulation_study.R`: Runs the simulation study using the `batchtools` R package. Results are saved in [res.rds](results/res.rds)
-- `02_visualizations.R`: Generates [figures](results/figures) and [tables](results/tables) for the main manuscript and [supplementary_data_1.pdf](results/supplementary_data_1.pdf).
-- `03_supplementary_data_2.R`: Creates the supplementary Excel file [supplementary_data_2.xlsx](results/supplementary_data_2.xlsx) containing bias and mean squared error for different settings.
-- `04_supplementary_data_3.Rmd`: R Markdown to create [supplementary_data_3.pdf](results/supplementary_data_3.pdf) with the output from the [Shiny application](https://sys-measurement-changes.bips.eu/).
+- `02_visualizations.R`: Generates [figures](results/figures) and [tables](results/tables) for the main manuscript.
+- `03_additional_file_1.R`: Creates the additional Excel file [additional_file_1.xlsx](results/additional_file_1.xlsx) containing bias and mean squared error for different settings.
+- `04_additional_file_2.Rmd`: R Markdown to create [additional_file_2.pdf](results/addtional_file_2.pdf) with the output from the [Shiny application](https://sys-measurement-changes.bips.eu/).
 - `renv.lock`: Records package versions.
 
 ## 🚀 Reproducing the results
 
 To reproduce the simulation study, run [01_simulation_study.R](01_simulation_study.R). This executes the simulations and saves the results to `results/res.rds`.
 
-To recreate the figures and tables for the main manuscript and [supplementary_data_1.pdf](results/supplementary_data_1.pdf),
-run [02_visualizations.R](02_visualizations.R). This saves the figures and supplementary figures under `results/figures` and the tables under `results/tables`. 
+To recreate the figures and tables for the main manuscript,
+run [02_visualizations.R](02_visualizations.R). This saves the figures under `results/figures` and the tables under `results/tables`. 
 
-To recreate the supplementary files  [supplementary_data_2.xlsx](results/supplementary_data_2.xlsx) and [supplementary_data_3.pdf](results/supplementary_data_3.pdf), run [03_supplementary_data_2.R](03_supplementary_data_2.R) and [04_supplementary_data_3.Rmd](04_supplementary_data_3.Rmd), respectively. 
+To recreate the additional files  [additional_file_1.xlsx](results/additional_file_1.xlsx) and [additional_file_2.pdf](results/additional_file_2.pdf), run [03_additional_file_1.R](03_additional_file_1.R) and [04_additional_file_2.Rmd](04_additional_file_2.Rmd), respectively. 
 
-> Note: It is **not necessary** to run the simulation study to create the figures, tables, or supplementary data, as the results are already stored in `results/res.rds`.
+> Note: It is **not necessary** to run the simulation study to create the figures, tables, or additional files, as the results are already stored in `results/res.rds`.
 
 ## 📚 R environment
 
