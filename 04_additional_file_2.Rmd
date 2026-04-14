@@ -1,6 +1,6 @@
 ---
 title: "\\textbf{Additional file 2}"
-author: "for\\\n\\textit{Assessing systematic mesurement changes in single-wave study data:}\\\n\\textit{A simulation study}"
+author: "for\\\n\\textit{Assessing systematic mesurement changes in single-wave study data:}\\\n\\textit{a simulation study}"
 output: 
   pdf_document:
     toc: true

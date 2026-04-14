@@ -11,13 +11,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Systematic measurement changes: A simulation study
+# Systematic measurement changes: a simulation study
 
 <!-- badges: start -->
 <!-- badges: end -->
 
 This repository contains the code to reproduce the simulation study in the paper  
-*"Assessing systematic measurement changes in single-wave study data: A 
+*"Assessing systematic measurement changes in single-wave study data: a 
 simulation study"*.
 
 The study compares seven statistical methods for quantifying systematic changes in a sequence of measurements across different settings:  

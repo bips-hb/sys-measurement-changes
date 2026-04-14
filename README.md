@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Systematic measurement changes: A simulation study
+# Systematic measurement changes: a simulation study
 
 <!-- badges: start -->
 
@@ -9,7 +9,7 @@
 
 This repository contains the code to reproduce the simulation study in
 the paper  
-*“Assessing systematic measurement changes in single-wave study data: A
+*“Assessing systematic measurement changes in single-wave study data: a
 simulation study”*.
 
 The study compares seven statistical methods for quantifying systematic
