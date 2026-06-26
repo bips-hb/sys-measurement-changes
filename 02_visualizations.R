@@ -535,9 +535,7 @@ sum_norm_bias_mse <- sum_norm_bias_mse %>%
          MSE_borda = rowSums(across(matches("^MSE.*_rank$"))),
          MSE_borda_scale = (MSE_borda - 4*1) / (4*7 - 4*1) ) %>% 
   ungroup() %>%
-  select(-c(ends_with("_rank"), "Bias_borda", "MSE_borda")) %>%
-  rename(Sample_size = nobs_cat,
-         Method = algorithm)
+  select(-c(ends_with("_rank"), "Bias_borda", "MSE_borda"))
 
 # highlight best values for latex output in bold
 sum_norm_bias_mse_highlighted <- sum_norm_bias_mse %>%
@@ -639,9 +637,7 @@ sum_lognorm_bias_mse <- sum_lognorm_bias_mse %>%
          MSE_borda = rowSums(across(matches("^MSE.*_rank$"))),
          MSE_borda_scale = (MSE_borda - 4*1) / (4*7 - 4*1) ) %>% 
   ungroup() %>%
-  select(-c(ends_with("_rank"), "Bias_borda", "MSE_borda")) %>%
-  rename(Sample_size = nobs_cat,
-         Method = algorithm) 
+  select(-c(ends_with("_rank"), "Bias_borda", "MSE_borda"))
 
 # highlight best values for latex output in bold
 sum_lognorm_bias_mse_highlighted <- sum_lognorm_bias_mse %>%
