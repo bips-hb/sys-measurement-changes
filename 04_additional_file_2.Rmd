@@ -1,6 +1,6 @@
 ---
 title: "\\textbf{Additional file 2}"
-author: "for\\\n\\textit{Assessing systematic mesurement changes in single-wave study data:}\\\n\\textit{a simulation study}"
+author: "for\\\n\\textit{Assessing systematic measurement changes in single-wave study data:}\\\n\\textit{a simulation study}"
 output: 
   pdf_document:
     toc: true
@@ -22,10 +22,10 @@ res <- readRDS("results/res.Rds")
 # algorithm
 alg_labels <- c(
   alg_arima = "ARIMA",
+  alg_moving_avg = "CMA",
   alg_flsa = "FLSA",
   alg_gam = "GAM",
   alg_lowess = "LOWESS",
-  alg_moving_avg = "MA",
   alg_pelt = "PELT",
   alg_piecewise_reg = "PR"
 )
