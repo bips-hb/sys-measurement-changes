@@ -6,23 +6,6 @@ library(dplyr)
 library(openxlsx2)
 
 
-# Help functions ---------------------------------------------------------------
-
-compute_radar_area <- function(edges) {
-  # Compute the normalized area of a radar plot polygon. # Returns the area
-  # rescaled to [0, 1], where 1 corresponds to the maximum possible area.
-  # edges : numeric vector of edge lengths (radial values) for the radar plot
-  a <- edges
-  b <- c(edges[-1], edges[1])
-  
-  ## compute polygon area using shoelace formula
-  area <- 0.5 * sinpi(0.5) * sum(a * b)
-  max_area <- 0.5 * sinpi(0.5) * length(edges)
-  
-  return(area / max_area)
-}
-
-
 # Preprocessing ----------------------------------------------------------------
 
 ## load results
@@ -76,29 +59,20 @@ res_norm_bias_mse <- res %>%
     Bias_MADM = mean(madm_dif, na.rm = TRUE),
     MSE_MADM = mean(madm_dif^2, na.rm = TRUE),
     Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
-    MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
-    .groups = "drop"
+    MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE)
   ) %>%
   mutate(across(
     matches("^(Bias|MSE)"),
-    ~ 1 - scales::rescale(
-      abs(.x),
-      from = c(0, max(abs(.x), na.rm = TRUE))
-    ),
+    ~ rank(abs(.x), ties.method = "average"),
     # abs() is needed for bias and does not do harm for MSE
-    .names = "{.col}_radar"
+    .names = "{.col}_rank"
   )) %>%
-  rowwise() %>%
-  mutate(
-    Bias_area = compute_radar_area(
-      c_across(c(Bias_range_radar, Bias_variance_radar, Bias_MADM_radar, Bias_NCP_radar))
-    ),
-    MSE_area = compute_radar_area(
-      c_across(c(MSE_range_radar, MSE_variance_radar, MSE_MADM_radar, MSE_NCP_radar))
-    )
-  ) %>%
+  mutate(Bias_borda = rowSums(across(matches("^Bias.*_rank$"))),
+         Bias_borda_scale = (Bias_borda - 4*1) / (4*7 - 4*1), 
+         MSE_borda = rowSums(across(matches("^MSE.*_rank$"))),
+         MSE_borda_scale = (MSE_borda - 4*1) / (4*7 - 4*1) ) %>% 
   ungroup() %>%
-  select(-c(ends_with("_radar"))) %>%
+  select(-c(ends_with("_rank"), "Bias_borda", "MSE_borda")) %>%
   rename(
     Sample_size = nobs_cat,
     Change_pattern = pattern,
@@ -118,29 +92,20 @@ res_lognorm_bias_mse <- res %>%
     Bias_MADM = mean(madm_dif, na.rm = TRUE),
     MSE_MADM = mean(madm_dif^2, na.rm = TRUE),
     Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
-    MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
-    .groups = "drop"
+    MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE)
   ) %>%
   mutate(across(
     matches("^(Bias|MSE)"),
-    ~ 1 - scales::rescale(
-      abs(.x),
-      from = c(0, max(abs(.x), na.rm = TRUE))
-    ),
+    ~ rank(abs(.x), ties.method = "average"),  
     # abs() is needed for bias and does not do harm for MSE
-    .names = "{.col}_radar"
+    .names = "{.col}_rank"
   )) %>%
-  rowwise() %>%
-  mutate(
-    Bias_area = compute_radar_area(
-      c_across(c(Bias_range_radar, Bias_variance_radar, Bias_MADM_radar, Bias_NCP_radar))
-    ),
-    MSE_area = compute_radar_area(
-      c_across(c(MSE_range_radar, MSE_variance_radar, MSE_MADM_radar, MSE_NCP_radar))
-    )
-  ) %>%
+  mutate(Bias_borda = rowSums(across(matches("^Bias.*_rank$"))),
+         Bias_borda_scale = (Bias_borda - 4*1) / (4*7 - 4*1), 
+         MSE_borda = rowSums(across(matches("^MSE.*_rank$"))),
+         MSE_borda_scale = (MSE_borda - 4*1) / (4*7 - 4*1) ) %>% 
   ungroup() %>%
-  select(-c(ends_with("_radar"))) %>%
+  select(-c(ends_with("_rank"), "Bias_borda", "MSE_borda")) %>%
   rename(
     Sample_size = nobs_cat,
     Change_pattern = pattern,
