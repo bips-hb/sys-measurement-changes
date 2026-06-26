@@ -15,22 +15,6 @@ source("functions/problems.R")
 
 
 # Help functions ---------------------------------------------------------------
-
-compute_radar_area <- function(edges) {
-  # Compute the normalized area of a radar plot polygon. # Returns the area
-  # rescaled to [0, 1], where 1 corresponds to the maximum possible area.
-  # edges : numeric vector of edge lengths (radial values) for the radar plot
-  a <- edges
-  b <- c(edges[-1], edges[1])
-
-  ## compute polygon area using shoelace formula
-  area <- 0.5 * sinpi(0.5) * sum(a * b)
-  max_area <- 0.5 * sinpi(0.5) * length(edges)
-
-  return(area / max_area)
-}
-
-
 scale_fill_diverging_fixed0 <- function(
     data = NULL,
     var = NULL,
@@ -115,10 +99,10 @@ res <- readRDS("results/res.rds")
 # algorithm
 alg_labels <- c(
   alg_arima = "ARIMA",
+  alg_moving_avg = "CMA",
   alg_flsa = "FLSA",
   alg_gam = "GAM",
   alg_lowess = "LOWESS",
-  alg_moving_avg = "MA",
   alg_pelt = "PELT",
   alg_piecewise_reg = "PR"
 )
@@ -537,29 +521,23 @@ sum_norm_bias_mse <- sum_norm_bias_mse %>%
   ) %>%
   bind_rows(sum_norm_bias_mse_agg)
 
-# compute area radar plot as a summary measure
-sum_norm_bias_mse <- sum_norm_bias_mse %>%
+# compute borda ranking as a summary measure
+sum_norm_bias_mse <- sum_norm_bias_mse %>%  
   group_by(nobs_cat) %>%
   mutate(across(
     matches("^(Bias|MSE)"),
-    ~ 1 - scales::rescale(
-      abs(.x),
-      from = c(0, max(abs(.x), na.rm = TRUE))
-    ),
+    ~ rank(abs(.x), ties.method = "average"),
     # abs() is needed for bias and does not do harm for MSE
-    .names = "{.col}_radar"
+    .names = "{.col}_rank"
   )) %>%
-  rowwise() %>%
-  mutate(
-    Bias_area = compute_radar_area(
-      c_across(c(Bias_range_radar, Bias_variance_radar, Bias_MADM_radar, Bias_NCP_radar))
-    ),
-    MSE_area = compute_radar_area(
-      c_across(c(MSE_range_radar, MSE_variance_radar, MSE_MADM_radar, MSE_NCP_radar))
-    )
-  ) %>%
+  mutate(Bias_borda = rowSums(across(matches("^Bias.*_rank$"))),
+         Bias_borda_scale = (Bias_borda - 4*1) / (4*7 - 4*1), 
+         MSE_borda = rowSums(across(matches("^MSE.*_rank$"))),
+         MSE_borda_scale = (MSE_borda - 4*1) / (4*7 - 4*1) ) %>% 
   ungroup() %>%
-  select(-c(ends_with("_radar")))
+  select(-c(ends_with("_rank"), "Bias_borda", "MSE_borda")) %>%
+  rename(Sample_size = nobs_cat,
+         Method = algorithm)
 
 # highlight best values for latex output in bold
 sum_norm_bias_mse_highlighted <- sum_norm_bias_mse %>%
@@ -573,16 +551,10 @@ sum_norm_bias_mse_highlighted <- sum_norm_bias_mse %>%
     .fns = ~ {
       orig_vals <- round(.x, 2) # for display
       abs_vals <- abs(orig_vals) # for highlighting
-
-      # bigger-is-better columns
-      if (grepl("_area$", cur_column())) {
-        target_val <- max(abs_vals, na.rm = TRUE)
-        is_target <- abs_vals == target_val
-      } else {
-        # smaller-is-better columns
-        target_val <- min(abs_vals, na.rm = TRUE)
-        is_target <- abs_vals == target_val
-      }
+      
+      # smaller-is-better columns
+      target_val <- min(abs_vals, na.rm = TRUE)
+      is_target <- abs_vals == target_val
 
       # highlight original values (not absolute!)
       ifelse(
@@ -652,29 +624,24 @@ sum_lognorm_bias_mse <- sum_lognorm_bias_mse %>%
   ) %>%
   bind_rows(sum_lognorm_bias_mse_agg)
 
-# compute area radar plot as a summary measure
-sum_lognorm_bias_mse <- sum_lognorm_bias_mse %>%
+# compute borda ranking as a summary measure
+sum_lognorm_bias_mse <- sum_lognorm_bias_mse %>%  
   group_by(nobs_cat) %>%
   mutate(across(
     matches("^(Bias|MSE)"),
-    ~ 1 - scales::rescale(
-      abs(.x),
-      from = c(0, max(abs(.x), na.rm = TRUE))
-    ),
+    ~ rank(abs(.x), ties.method = "average"),  
     # abs() is needed for bias and does not do harm for MSE
-    .names = "{.col}_radar"
-  )) %>%
-  rowwise() %>%
-  mutate(
-    Bias_area = compute_radar_area(
-      c_across(c(Bias_range_radar, Bias_variance_radar, Bias_MADM_radar, Bias_NCP_radar))
-    ),
-    MSE_area = compute_radar_area(
-      c_across(c(MSE_range_radar, MSE_variance_radar, MSE_MADM_radar, MSE_NCP_radar))
-    )
+    .names = "{.col}_rank"
+  )
   ) %>%
+  mutate(Bias_borda = rowSums(across(matches("^Bias.*_rank$"))),
+         Bias_borda_scale = (Bias_borda - 4*1) / (4*7 - 4*1), 
+         MSE_borda = rowSums(across(matches("^MSE.*_rank$"))),
+         MSE_borda_scale = (MSE_borda - 4*1) / (4*7 - 4*1) ) %>% 
   ungroup() %>%
-  select(-c(ends_with("_radar")))
+  select(-c(ends_with("_rank"), "Bias_borda", "MSE_borda")) %>%
+  rename(Sample_size = nobs_cat,
+         Method = algorithm) 
 
 # highlight best values for latex output in bold
 sum_lognorm_bias_mse_highlighted <- sum_lognorm_bias_mse %>%
@@ -689,15 +656,9 @@ sum_lognorm_bias_mse_highlighted <- sum_lognorm_bias_mse %>%
       orig_vals <- round(.x, 2) # for display
       abs_vals <- abs(orig_vals) # for highlighting
 
-      # bigger-is-better columns
-      if (grepl("_area$", cur_column())) {
-        target_val <- max(abs_vals, na.rm = TRUE)
-        is_target <- abs_vals == target_val
-      } else {
-        # smaller-is-better columns
-        target_val <- min(abs_vals, na.rm = TRUE)
-        is_target <- abs_vals == target_val
-      }
+      # smaller-is-better columns
+      target_val <- min(abs_vals, na.rm = TRUE)
+      is_target <- abs_vals == target_val
 
       # highlight original values (not absolute!)
       ifelse(
