@@ -32,10 +32,10 @@ res <- readRDS("results/res.rds")
 # algorithm
 alg_labels <- c(
   alg_arima = "ARIMA",
+  alg_moving_avg = "CMA",
   alg_flsa = "FLSA",
   alg_gam = "GAM",
   alg_lowess = "LOWESS",
-  alg_moving_avg = "MA",
   alg_pelt = "PELT",
   alg_piecewise_reg = "PR"
 )
