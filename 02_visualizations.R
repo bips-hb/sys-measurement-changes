@@ -101,10 +101,10 @@ alg_labels <- c(
   alg_arima = "ARIMA",
   alg_moving_avg = "CMA",
   alg_flsa = "FLSA",
-  alg_gam = "GAM",
   alg_lowess = "LOWESS",
   alg_pelt = "PELT",
-  alg_piecewise_reg = "PR"
+  alg_piecewise_reg = "PR",
+  alg_gam = "TPRS"
 )
 # from scico palette "batlow"
 # sample(scico::scico(7, palette = "batlow"))
@@ -630,8 +630,7 @@ sum_lognorm_bias_mse <- sum_lognorm_bias_mse %>%
     ~ rank(abs(.x), ties.method = "average"),  
     # abs() is needed for bias and does not do harm for MSE
     .names = "{.col}_rank"
-  )
-  ) %>%
+  )) %>%
   mutate(Bias_borda = rowSums(across(matches("^Bias.*_rank$"))),
          Bias_borda_scale = (Bias_borda - 4*1) / (4*7 - 4*1), 
          MSE_borda = rowSums(across(matches("^MSE.*_rank$"))),
