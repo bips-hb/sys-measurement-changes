@@ -177,7 +177,7 @@ f_gam <- function(simdata) {
       k_num < nrow(simdata) - 10)) {
     k_num <- k_num + 10
     res <- mgcv::gam(y ~ s(index, k = k_num), data = simdata, method = "REML")
-    kcheck <- f_gam_helper_basis_dim_check(res)
+    kcheck <- gam_helper_basis_dim_check(res)
   }
 
   return(list(
