@@ -78,7 +78,9 @@ res_norm_bias_mse <- res %>%
     Change_pattern = pattern,
     Magnitude_change = dmaxf,
     SNR = snr,
-    Method = algorithm
+    Method = algorithm,
+    Bias_Borda = Bias_borda_scale,
+    MSE_Borda = MSE_borda_scale
   )
 
 res_lognorm_bias_mse <- res %>%
@@ -111,7 +113,9 @@ res_lognorm_bias_mse <- res %>%
     Change_pattern = pattern,
     Magnitude_change = dmaxf,
     SNR = snr,
-    Method = algorithm
+    Method = algorithm,
+    Bias_Borda = Bias_borda_scale,
+    MSE_Borda = MSE_borda_scale
   )
 
 ## save excel file
