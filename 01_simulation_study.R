@@ -294,4 +294,19 @@ res <- res %>%
   mutate(prob.id = cur_group_id()) %>%
   ungroup()
 
+id_link <- res %>%
+  select(job.id, prob.id) %>%
+  distinct(prob.id, .keep_all = TRUE)
+
+# extract SD of the measurement
+sd_y <- sapply(id_link$job.id, function(id) {
+  sd(makeJob(id)$instance$y)
+})
+sd_data <- cbind(id_link, sd_y) %>%
+  select(-job.id)
+
+# combine with results
+res <- res %>%
+  left_join(sd_data, by = "prob.id")
+
 saveRDS(res, "/results/res.rds")

@@ -220,7 +220,7 @@ ggsave("results/figures/Fig1_syschange.pdf", width = 170, height = 121, units = 
 
 
 #* Figure 2 --------------------------------------------------------------------
-# Radar plots of scaled and inverted absolute bias and mean squared error for
+# Radar plots of scaled and inverted bias and mean squared error for
 # quantifying systematic changes in normally distributed data.
 layout_matrix <- matrix(c(
   rep(1, 4), # row 1: Bias title
@@ -236,12 +236,12 @@ radar_norm_samp <- res %>%
   filter(distribution == "norm") %>%
   group_by(algorithm, nobs_cat) %>%
   summarise(
-    Bias_range = mean(range_dif, na.rm = TRUE),
-    MSE_range = mean(range_dif^2, na.rm = TRUE),
-    Bias_variance = mean(var_dif, na.rm = TRUE),
-    MSE_variance = mean(var_dif^2, na.rm = TRUE),
-    Bias_MADM = mean(madm_dif, na.rm = TRUE),
-    MSE_MADM = mean(madm_dif^2, na.rm = TRUE),
+    Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
+    MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_variance = mean(var_dif/sd_y, na.rm = TRUE),
+    MSE_variance = mean(var_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_MADM = mean(madm_dif/sd_y, na.rm = TRUE),
+    MSE_MADM = mean(madm_dif^2/sd_y^2, na.rm = TRUE),
     Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
     MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
     .groups = "drop"
@@ -272,7 +272,7 @@ par(mar = c(1, 1, 1, 1), oma = c(1, 1, 1, 1), xpd = TRUE)
 
 ## Bias
 plot.new()
-text(0.5, 0.5, "Absolute bias (scaled and inverted)", cex = 1.4, font = 2)
+text(0.5, 0.5, "Bias magnitude (scaled and inverted)", cex = 1.4, font = 2)
 
 # Loop through each method to plot
 for (i in 1:length(alg_labels)) {
@@ -364,12 +364,12 @@ radar_lognorm_samp <- res %>%
   filter(distribution == "lognorm") %>%
   group_by(algorithm, nobs_cat) %>%
   summarise(
-    Bias_range = mean(range_dif, na.rm = TRUE),
-    MSE_range = mean(range_dif^2, na.rm = TRUE),
-    Bias_variance = mean(var_dif, na.rm = TRUE),
-    MSE_variance = mean(var_dif^2, na.rm = TRUE),
-    Bias_MADM = mean(madm_dif, na.rm = TRUE),
-    MSE_MADM = mean(madm_dif^2, na.rm = TRUE),
+    Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
+    MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_variance = mean(var_dif/sd_y, na.rm = TRUE),
+    MSE_variance = mean(var_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_MADM = mean(madm_dif/sd_y, na.rm = TRUE),
+    MSE_MADM = mean(madm_dif^2/sd_y^2, na.rm = TRUE),
     Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
     MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
     .groups = "drop"
@@ -399,7 +399,7 @@ par(mar = c(1, 1, 1, 1), oma = c(1, 1, 1, 1), xpd = TRUE)
 
 ## Bias
 plot.new()
-text(0.5, 0.5, "Absolute bias (scaled and inverted)", cex = 1.4, font = 2)
+text(0.5, 0.5, "Bias magnitude (scaled and inverted)", cex = 1.4, font = 2)
 
 # Loop through each method to plot
 for (i in 1:length(alg_labels)) {
@@ -486,12 +486,12 @@ sum_norm_bias_mse <- res %>%
   filter(distribution == "norm") %>%
   group_by(nobs_cat, algorithm) %>%
   summarise(
-    Bias_range = mean(range_dif, na.rm = TRUE),
-    MSE_range = mean(range_dif^2, na.rm = TRUE),
-    Bias_variance = mean(var_dif, na.rm = TRUE),
-    MSE_variance = mean(var_dif^2, na.rm = TRUE),
-    Bias_MADM = mean(madm_dif, na.rm = TRUE),
-    MSE_MADM = mean(madm_dif^2, na.rm = TRUE),
+    Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
+    MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_variance = mean(var_dif/sd_y, na.rm = TRUE),
+    MSE_variance = mean(var_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_MADM = mean(madm_dif/sd_y, na.rm = TRUE),
+    MSE_MADM = mean(madm_dif^2/sd_y^2, na.rm = TRUE),
     Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
     MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
     .groups = "drop"
@@ -502,12 +502,12 @@ sum_norm_bias_mse_agg <- res %>%
   filter(distribution == "norm") %>%
   group_by(algorithm) %>%
   summarise(
-    Bias_range = mean(range_dif, na.rm = TRUE),
-    MSE_range = mean(range_dif^2, na.rm = TRUE),
-    Bias_variance = mean(var_dif, na.rm = TRUE),
-    MSE_variance = mean(var_dif^2, na.rm = TRUE),
-    Bias_MADM = mean(madm_dif, na.rm = TRUE),
-    MSE_MADM = mean(madm_dif^2, na.rm = TRUE),
+    Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
+    MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_variance = mean(var_dif/sd_y, na.rm = TRUE),
+    MSE_variance = mean(var_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_MADM = mean(madm_dif/sd_y, na.rm = TRUE),
+    MSE_MADM = mean(madm_dif^2/sd_y^2, na.rm = TRUE),
     Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
     MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
     .groups = "drop"
@@ -587,12 +587,12 @@ sum_lognorm_bias_mse <- res %>%
   filter(distribution == "lognorm") %>%
   group_by(nobs_cat, algorithm) %>%
   summarise(
-    Bias_range = mean(range_dif, na.rm = TRUE),
-    MSE_range = mean(range_dif^2, na.rm = TRUE),
-    Bias_variance = mean(var_dif, na.rm = TRUE),
-    MSE_variance = mean(var_dif^2, na.rm = TRUE),
-    Bias_MADM = mean(madm_dif, na.rm = TRUE),
-    MSE_MADM = mean(madm_dif^2, na.rm = TRUE),
+    Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
+    MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_variance = mean(var_dif/sd_y, na.rm = TRUE),
+    MSE_variance = mean(var_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_MADM = mean(madm_dif/sd_y, na.rm = TRUE),
+    MSE_MADM = mean(madm_dif^2/sd_y^2, na.rm = TRUE),
     Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
     MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
     .groups = "drop"
@@ -603,12 +603,12 @@ sum_lognorm_bias_mse_agg <- res %>%
   filter(distribution == "lognorm") %>%
   group_by(algorithm) %>%
   summarise(
-    Bias_range = mean(range_dif, na.rm = TRUE),
-    MSE_range = mean(range_dif^2, na.rm = TRUE),
-    Bias_variance = mean(var_dif, na.rm = TRUE),
-    MSE_variance = mean(var_dif^2, na.rm = TRUE),
-    Bias_MADM = mean(madm_dif, na.rm = TRUE),
-    MSE_MADM = mean(madm_dif^2, na.rm = TRUE),
+    Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
+    MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_variance = mean(var_dif/sd_y, na.rm = TRUE),
+    MSE_variance = mean(var_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_MADM = mean(madm_dif/sd_y, na.rm = TRUE),
+    MSE_MADM = mean(madm_dif^2/sd_y^2, na.rm = TRUE),
     Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
     MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
     .groups = "drop"
@@ -684,7 +684,7 @@ print(latex_table3_lognorm,
 # Heatmap of the bias for range by systematic change pattern across sample sizes
 # for normally distributed data.
 rangedat <- res %>%
-  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, range_dif) %>%
+  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, range_dif, sd_y) %>%
   mutate(nobs_cat = cut(nobs,
     breaks = seq(min(nobs), max(nobs) + 10, by = 10),
     right = FALSE,
@@ -692,7 +692,7 @@ rangedat <- res %>%
   )) %>%
   mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
   group_by(nobs_cat, distribution, pattern, algorithm) %>%
-  summarise(mean_range_dif = mean(range_dif), .groups = "drop") # calculate group mean
+  summarise(mean_range_dif = mean(range_dif/sd_y), .groups = "drop") # calculate group mean
 
 ggplot(rangedat[rangedat$distribution == "norm", ], aes(y = nobs_cat, x = algorithm, fill = mean_range_dif)) +
   geom_tile(color = "white") +
@@ -730,7 +730,7 @@ ggsave("results/figures/FigS1_heatmap_bias_norm_range.pdf", width = 170, height 
 # Heatmap of the bias for variance by systematic change pattern across sample sizes
 # for normally distributed data.
 vardat <- res %>%
-  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, var_dif) %>%
+  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, var_dif, sd_y) %>%
   mutate(nobs_cat = cut(nobs,
     breaks = seq(min(nobs), max(nobs) + 10, by = 10),
     right = FALSE,
@@ -738,7 +738,7 @@ vardat <- res %>%
   )) %>%
   mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
   group_by(nobs_cat, distribution, pattern, algorithm) %>%
-  summarise(mean_var_dif = mean(var_dif), .groups = "drop") # calculate group mean
+  summarise(mean_var_dif = mean(var_dif/sd_y), .groups = "drop") # calculate group mean
 
 ggplot(vardat[vardat$distribution == "norm", ], aes(y = nobs_cat, x = algorithm, fill = mean_var_dif)) +
   geom_tile(color = "white") +
@@ -776,7 +776,7 @@ ggsave("results/figures/FigS2_heatmap_bias_norm_var.pdf", width = 170, height = 
 # Heatmap of the bias for mean absolute deviation around the median by systematic
 # change pattern across sample sizes for normally distributed data.
 madmdat <- res %>%
-  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, madm_dif) %>%
+  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, madm_dif, sd_y) %>%
   mutate(nobs_cat = cut(nobs,
     breaks = seq(min(nobs), max(nobs) + 10, by = 10),
     right = FALSE,
@@ -784,7 +784,7 @@ madmdat <- res %>%
   )) %>%
   mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
   group_by(nobs_cat, distribution, pattern, algorithm) %>%
-  summarise(mean_madm_dif = mean(madm_dif), .groups = "drop") # calculate group mean
+  summarise(mean_madm_dif = mean(madm_dif/sd_y), .groups = "drop") # calculate group mean
 
 ggplot(madmdat[madmdat$distribution == "norm", ], aes(y = nobs_cat, x = algorithm, fill = mean_madm_dif)) +
   geom_tile(color = "white") +
@@ -868,7 +868,7 @@ ggsave("results/figures/FigS4_heatmap_bias_norm_ncpts.pdf", width = 170, height 
 # Heatmap of the mean squared error for range by systematic change pattern across
 # sample sizes for normally distributed data.
 rangedat <- res %>%
-  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, range_dif) %>%
+  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, range_dif, sd_y) %>%
   mutate(nobs_cat = cut(nobs,
     breaks = seq(min(nobs), max(nobs) + 10, by = 10),
     right = FALSE,
@@ -876,7 +876,7 @@ rangedat <- res %>%
   )) %>%
   mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
   group_by(nobs_cat, distribution, pattern, algorithm) %>%
-  summarise(mean_range_dif = mean(range_dif^2), .groups = "drop") # calculate group mean
+  summarise(mean_range_dif = mean(range_dif^2/sd_y^2), .groups = "drop") # calculate group mean
 
 ggplot(rangedat[rangedat$distribution == "norm", ], aes(y = nobs_cat, x = algorithm, fill = mean_range_dif)) +
   geom_tile(color = "white") +
@@ -914,7 +914,7 @@ ggsave("results/figures/FigS5_heatmap_mse_norm_range.pdf", width = 170, height =
 # Heatmap of the mean squared error for variance by systematic change pattern
 # across sample sizes for normally distributed data.
 vardat <- res %>%
-  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, var_dif) %>%
+  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, var_dif, sd_y) %>%
   mutate(nobs_cat = cut(nobs,
     breaks = seq(min(nobs), max(nobs) + 10, by = 10),
     right = FALSE,
@@ -922,7 +922,7 @@ vardat <- res %>%
   )) %>%
   mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
   group_by(nobs_cat, distribution, pattern, algorithm) %>%
-  summarise(mean_var_dif = mean(var_dif^2), .groups = "drop") # calculate group mean
+  summarise(mean_var_dif = mean(var_dif^2/sd_y^2), .groups = "drop") # calculate group mean
 
 ggplot(vardat[vardat$distribution == "norm", ], aes(y = nobs_cat, x = algorithm, fill = mean_var_dif)) +
   geom_tile(color = "white") +
@@ -960,7 +960,7 @@ ggsave("results/figures/FigS6_heatmap_mse_norm_var.pdf", width = 170, height = 2
 # Heatmap of the mean squared error for mean absolute deviation around the median
 # by systematic change pattern across sample sizes for normally distributed data.
 madmdat <- res %>%
-  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, madm_dif) %>%
+  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, madm_dif, sd_y) %>%
   mutate(nobs_cat = cut(nobs,
     breaks = seq(min(nobs), max(nobs) + 10, by = 10),
     right = FALSE,
@@ -968,7 +968,7 @@ madmdat <- res %>%
   )) %>%
   mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
   group_by(nobs_cat, distribution, pattern, algorithm) %>%
-  summarise(mean_madm_dif = mean(madm_dif^2), .groups = "drop") # calculate group mean
+  summarise(mean_madm_dif = mean(madm_dif^2/sd_y^2), .groups = "drop") # calculate group mean
 
 ggplot(madmdat[madmdat$distribution == "norm", ], aes(y = nobs_cat, x = algorithm, fill = mean_madm_dif)) +
   geom_tile(color = "white") +
@@ -1052,7 +1052,7 @@ ggsave("results/figures/FigS8_heatmap_mse_norm_ncpts.pdf", width = 170, height =
 # Heatmap of the bias for range by systematic change pattern across sample sizes
 # for log-normally distributed data.
 rangedat <- res %>%
-  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, range_dif) %>%
+  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, range_dif,sd_y) %>%
   mutate(nobs_cat = cut(nobs,
     breaks = seq(min(nobs), max(nobs) + 10, by = 10),
     right = FALSE,
@@ -1060,7 +1060,7 @@ rangedat <- res %>%
   )) %>%
   mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
   group_by(nobs_cat, distribution, pattern, algorithm) %>%
-  summarise(mean_range_dif = mean(range_dif), .groups = "drop") # calculate group mean
+  summarise(mean_range_dif = mean(range_dif/sd_y), .groups = "drop") # calculate group mean
 
 ggplot(rangedat[rangedat$distribution == "lognorm", ], aes(y = nobs_cat, x = algorithm, fill = mean_range_dif)) +
   geom_tile(color = "white") +
@@ -1098,7 +1098,7 @@ ggsave("results/figures/FigS9_heatmap_bias_lognorm_range.pdf", width = 170, heig
 # Heatmap of the bias for variance by systematic change pattern across sample sizes
 # for log-normally distributed data.
 vardat <- res %>%
-  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, var_dif) %>%
+  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, var_dif, sd_y) %>%
   mutate(nobs_cat = cut(nobs,
     breaks = seq(min(nobs), max(nobs) + 10, by = 10),
     right = FALSE,
@@ -1106,7 +1106,7 @@ vardat <- res %>%
   )) %>%
   mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
   group_by(nobs_cat, distribution, pattern, algorithm) %>%
-  summarise(mean_var_dif = mean(var_dif), .groups = "drop") # calculate group mean
+  summarise(mean_var_dif = mean(var_dif/sd_y), .groups = "drop") # calculate group mean
 
 ggplot(vardat[vardat$distribution == "lognorm", ], aes(y = nobs_cat, x = algorithm, fill = mean_var_dif)) +
   geom_tile(color = "white") +
@@ -1144,7 +1144,7 @@ ggsave("results/figures/FigS10_heatmap_bias_lognorm_var.pdf", width = 170, heigh
 # Heatmap of the bias for mean absolute deviation around the median by systematic
 # change pattern across sample sizes for log-normally distributed data.
 madmdat <- res %>%
-  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, madm_dif) %>%
+  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, madm_dif, sd_y) %>%
   mutate(nobs_cat = cut(nobs,
     breaks = seq(min(nobs), max(nobs) + 10, by = 10),
     right = FALSE,
@@ -1152,7 +1152,7 @@ madmdat <- res %>%
   )) %>%
   mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
   group_by(nobs_cat, distribution, pattern, algorithm) %>%
-  summarise(mean_madm_dif = mean(madm_dif), .groups = "drop") # calculate group mean
+  summarise(mean_madm_dif = mean(madm_dif/sd_y), .groups = "drop") # calculate group mean
 
 ggplot(madmdat[madmdat$distribution == "lognorm", ], aes(y = nobs_cat, x = algorithm, fill = mean_madm_dif)) +
   geom_tile(color = "white") +
@@ -1236,7 +1236,7 @@ ggsave("results/figures/FigS12_heatmap_bias_lognorm_ncpts.pdf", width = 170, hei
 # Heatmap of the mean squared error for range by systematic change pattern across
 # sample sizes for log-normally distributed data.
 rangedat <- res %>%
-  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, range_dif) %>%
+  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, range_dif, sd_y) %>%
   mutate(nobs_cat = cut(nobs,
     breaks = seq(min(nobs), max(nobs) + 10, by = 10),
     right = FALSE,
@@ -1244,7 +1244,7 @@ rangedat <- res %>%
   )) %>%
   mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
   group_by(nobs_cat, distribution, pattern, algorithm) %>%
-  summarise(mean_range_dif = mean(range_dif^2), .groups = "drop") # calculate group mean
+  summarise(mean_range_dif = mean(range_dif^2/sd_y^2), .groups = "drop") # calculate group mean
 
 ggplot(rangedat[rangedat$distribution == "lognorm", ], aes(y = nobs_cat, x = algorithm, fill = mean_range_dif)) +
   geom_tile(color = "white") +
@@ -1282,7 +1282,7 @@ ggsave("results/figures/FigS13_heatmap_mse_lognorm_range.pdf", width = 170, heig
 # Heatmap of the mean squared error for variance by systematic change pattern
 # across sample sizes for log-normally distributed data.
 vardat <- res %>%
-  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, var_dif) %>%
+  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, var_dif, sd_y) %>%
   mutate(nobs_cat = cut(nobs,
     breaks = seq(min(nobs), max(nobs) + 10, by = 10),
     right = FALSE,
@@ -1290,7 +1290,7 @@ vardat <- res %>%
   )) %>%
   mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
   group_by(nobs_cat, distribution, pattern, algorithm) %>%
-  summarise(mean_var_dif = mean(var_dif^2), .groups = "drop") # calculate group mean
+  summarise(mean_var_dif = mean(var_dif^2/sd_y^2), .groups = "drop") # calculate group mean
 
 ggplot(vardat[vardat$distribution == "lognorm", ], aes(y = nobs_cat, x = algorithm, fill = mean_var_dif)) +
   geom_tile(color = "white") +
@@ -1328,7 +1328,7 @@ ggsave("results/figures/FigS14_heatmap_mse_lognorm_var.pdf", width = 170, height
 # Heatmap of the mean squared error for mean absolute deviation around the median
 # by systematic change pattern across sample sizes for log-normally distributed data.
 madmdat <- res %>%
-  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, madm_dif) %>%
+  dplyr::select(distribution, pattern, algorithm, nobs, snr, dmaxf, madm_dif, sd_y) %>%
   mutate(nobs_cat = cut(nobs,
     breaks = seq(min(nobs), max(nobs) + 10, by = 10),
     right = FALSE,
@@ -1336,7 +1336,7 @@ madmdat <- res %>%
   )) %>%
   mutate(nobs_cat = as.numeric(as.character(nobs_cat))) %>%
   group_by(nobs_cat, distribution, pattern, algorithm) %>%
-  summarise(mean_madm_dif = mean(madm_dif^2), .groups = "drop") # calculate group mean
+  summarise(mean_madm_dif = mean(madm_dif^2/sd_y^2), .groups = "drop") # calculate group mean
 
 ggplot(madmdat[madmdat$distribution == "lognorm", ], aes(y = nobs_cat, x = algorithm, fill = mean_madm_dif)) +
   geom_tile(color = "white") +
