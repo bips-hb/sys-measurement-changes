@@ -233,21 +233,21 @@ ggsave("results/figures/Fig1_syschange.pdf", width = 170, height = 121, units = 
 
 
 #* Figure 2 --------------------------------------------------------------------
-# Radar plots of scaled and inverted bias and mean squared error for
-# quantifying systematic changes in normally distributed data.
+# Radar plots of scaled and inverted bias for quantifying systematic changes in
+# normally distributed data.
 layout_matrix <- matrix(c(
-  rep(1, 4), # row 1: Bias title
-  2:5, # row 2: radar plots 1-4 Bias
-  6:9, # row 3: radar plots 5-7 Bias
-  rep(10, 4), # row 4: MSE title
-  11:14, # row 5: radar plots 1-4 MSE
-  15:18 # row 6: radar plots 5-7 MSE
+  rep(1, 4), # row 1: Sensitivity title
+  2:5, # row 2: radar plots 1-4 Sensitivity
+  6:9, # row 3: radar plots 5-7 Sensitivity
+  rep(10, 4), # row 4: Specificity title
+  11:14, # row 5: radar plots 1-4 Specificity
+  15:18 # row 6: radar plots 5-7 Specificity
 ), nrow = 6, byrow = TRUE)
 row_heights <- c(0.2, 1, 1, 0.2, 1, 1)
 
 radar_norm_samp <- res %>%
   filter(distribution == "norm") %>%
-  group_by(algorithm, nobs_cat) %>%
+  group_by(change, algorithm, nobs_cat) %>%
   summarise(
     Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
     MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
@@ -271,11 +271,9 @@ radar_norm_samp <- res %>%
   )
 
 radar_norm_samp_bias <- radar_norm_samp %>%
-  select(algorithm, nobs_cat, starts_with("Bias_"))
-radar_norm_samp_mse <- radar_norm_samp %>%
-  select(algorithm, nobs_cat, starts_with("MSE_"))
+  select(change, algorithm, nobs_cat, starts_with("Bias_"))
 
-pdf("results/figures/Fig2_radar_norm_samp.pdf",
+pdf("results/figures/Fig2_radar_norm_samp_bias.pdf",
   width = 6.69, #unit: inches (equals 170mm)
   height = 8 #maximum height: 225mm (8.85 in) for figure and legend
 )
@@ -283,15 +281,19 @@ pdf("results/figures/Fig2_radar_norm_samp.pdf",
 layout(layout_matrix, heights = row_heights)
 par(mar = c(1, 1, 1, 1), oma = c(1, 1, 1, 1), xpd = TRUE)
 
-## Bias
+## Sensitivity
 plot.new()
-text(0.5, 0.5, "Bias magnitude (scaled and inverted)", cex = 1.4, font = 2)
+text(0.5, 0.5, "Change", cex = 1.4, font = 2)
 
 # Loop through each method to plot
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
-  radar_norm_alg <- rbind(rep(1, 4), rep(0, 4), radar_norm_samp_bias[which(radar_norm_samp_bias$algorithm == alg), c(-1, -2)])
-  rownames(radar_norm_alg) <- c("Max", "Min", as.character(radar_norm_samp_bias$nobs_cat[which(radar_norm_samp_bias$algorithm == alg)]))
+  temp <- radar_norm_samp_bias %>%
+    filter(algorithm == alg & change == "Change")
+  radar_norm_alg <- rbind(rep(1, 4), 
+                          rep(0, 4), 
+                          temp[, c(-1, -2, -3)])
+  rownames(radar_norm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
 
   fmsb::radarchart(
     radar_norm_alg,
@@ -313,16 +315,18 @@ for (i in 1:length(alg_labels)) {
   mtext(unname(alg_labels[i]), side = 3, line = -0.3, cex = 0.8, font = 2)
 }
 
-## MSE
+## Specificity
 plot.new() # to handle the missing 8. plot
 plot.new()
-text(0.5, 0.5, "MSE (scaled and inverted)", cex = 1.4, font = 2)
+text(0.5, 0.5, "No change", cex = 1.4, font = 2)
 
 # Loop through each method to plot
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
-  radar_norm_alg <- rbind(rep(1, 4), rep(0, 4), radar_norm_samp_mse[which(radar_norm_samp_mse$algorithm == alg), c(-1, -2)])
-  rownames(radar_norm_alg) <- c("Max", "Min", as.character(radar_norm_samp_mse$nobs_cat[which(radar_norm_samp_mse$algorithm == alg)]))
+  temp <- radar_norm_samp_bias %>%
+    filter(algorithm == alg & change == "No change")
+  radar_norm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2, -3)])
+  rownames(radar_norm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
 
   fmsb::radarchart(
     radar_norm_alg,
@@ -348,7 +352,7 @@ for (i in 1:length(alg_labels)) {
 # Add legend for sample sizes
 plot.new()
 legend("center",
-  legend = unique(radar_norm_samp_mse$nobs_cat),
+  legend = unique(radar_norm_samp_bias$nobs_cat),
   col = nobs_col,
   lty = 1:5,
   lwd = 2,
@@ -361,6 +365,138 @@ dev.off()
 
 
 #* Figure 3 --------------------------------------------------------------------
+# Radar plots of scaled and inverted MSE for quantifying systematic changes in
+# normally distributed data.
+layout_matrix <- matrix(c(
+  rep(1, 4), # row 1: Sensitivity title
+  2:5, # row 2: radar plots 1-4 Sensitivity
+  6:9, # row 3: radar plots 5-7 Sensitivity
+  rep(10, 4), # row 4: Specificity title
+  11:14, # row 5: radar plots 1-4 Specificity
+  15:18 # row 6: radar plots 5-7 Specificity
+), nrow = 6, byrow = TRUE)
+row_heights <- c(0.2, 1, 1, 0.2, 1, 1)
+
+radar_norm_samp <- res %>%
+  filter(distribution == "norm") %>%
+  group_by(change, algorithm, nobs_cat) %>%
+  summarise(
+    Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
+    MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_variance = mean(var_dif/sd_y, na.rm = TRUE),
+    MSE_variance = mean(var_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_MADM = mean(madm_dif/sd_y, na.rm = TRUE),
+    MSE_MADM = mean(madm_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
+    MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  # abs() is needed for bias and does not do harm for MSE
+  mutate(
+    across(
+      matches("^(Bias|MSE)"),
+      ~ 1 - scales::rescale(
+        abs(.x),
+        from = c(0, max(abs(.x), na.rm = TRUE))
+      )
+    )
+  )
+
+radar_norm_samp_mse <- radar_norm_samp %>%
+  select(change, algorithm, nobs_cat, starts_with("MSE_"))
+
+pdf("results/figures/Fig3_radar_norm_samp_mse.pdf",
+    width = 6.69, #unit: inches (equals 170mm)
+    height = 8 #maximum height: 225mm (8.85 in) for figure and legend
+)
+# Set up plotting area
+layout(layout_matrix, heights = row_heights)
+par(mar = c(1, 1, 1, 1), oma = c(1, 1, 1, 1), xpd = TRUE)
+
+## Sensitivity
+plot.new()
+text(0.5, 0.5, "Change", cex = 1.4, font = 2)
+
+# Loop through each method to plot
+for (i in 1:length(alg_labels)) {
+  alg <- unname(alg_labels[i])
+  temp <- radar_norm_samp_mse %>%
+    filter(algorithm == alg & change == "Change")
+  radar_norm_alg <- rbind(rep(1, 4), 
+                          rep(0, 4), 
+                          temp[, c(-1, -2, -3)])
+  rownames(radar_norm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
+  
+  fmsb::radarchart(
+    radar_norm_alg,
+    axistype = 1,
+    vlabels = est_labels_short,
+    pcol = nobs_col,
+    plty = 1:5,
+    plwd = 2,
+    cglcol = "grey",
+    cglty = 1,
+    axislabcol = "black",
+    caxislabels = c("0", "", "0.5", "", "1"),
+    calcex = 0.9,
+    vlcex = 0.9,
+    title = "",
+  )
+  
+  # Add method title
+  mtext(unname(alg_labels[i]), side = 3, line = -0.3, cex = 0.8, font = 2)
+}
+
+## Specificity
+plot.new() # to handle the missing 8. plot
+plot.new()
+text(0.5, 0.5, "No change", cex = 1.4, font = 2)
+
+# Loop through each method to plot
+for (i in 1:length(alg_labels)) {
+  alg <- unname(alg_labels[i])
+  temp <- radar_norm_samp_mse %>%
+    filter(algorithm == alg & change == "No change")
+  radar_norm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2, -3)])
+  rownames(radar_norm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
+  
+  fmsb::radarchart(
+    radar_norm_alg,
+    axistype = 1,
+    vlabels = est_labels_short,
+    pcol = nobs_col,
+    # pfcol = alpha(nobs_col, 0.2),
+    plty = 1:5,
+    plwd = 2,
+    cglcol = "grey",
+    cglty = 1,
+    axislabcol = "black",
+    caxislabels = c("0", "", "0.5", "", "1"),
+    calcex = 0.9,
+    vlcex = 0.9,
+    title = "",
+  )
+  
+  # Add method title
+  mtext(unname(alg_labels[i]), side = 3, line = -0.3, cex = 0.8, font = 2)
+}
+
+# Add legend for sample sizes
+plot.new()
+legend("center",
+       legend = unique(radar_norm_samp_mse$nobs_cat),
+       col = nobs_col,
+       lty = 1:5,
+       lwd = 2,
+       bty = "n",
+       cex = 0.8,
+       title = "Sample size",
+       title.font = 2
+)
+dev.off()
+
+
+#* Figure S3 --------------------------------------------------------------------
 # Radar plots of scaled and inverted absolute bias and mean squared error for
 # quantifying systematic changes in log-normally distributed data.
 layout_matrix <- matrix(c(
@@ -590,6 +726,7 @@ print(latex_table2_norm,
   file = "results/tables/table2_norm_sens.tex"
 )
 
+
 #* Table 3 ---------------------------------------------------------------------
 # Specificity: Bias and mean squared error for quantifying systematic changes in 
 # normally distributed data.
@@ -793,6 +930,7 @@ print(latex_table4_lognorm,
   file = "results/tables/tableS1_lognorm_sens.tex"
 )
 
+
 #* Table S2 ---------------------------------------------------------------------
 # Specificity: Bias and mean squared error for quantifying systematic changes in
 # log-normally distributed data.
@@ -895,7 +1033,271 @@ print(latex_table5_lognorm,
 
 
 # Suppl. figures ---------------------------------------------------------------
-#* Figure S1 -------------------------------------------------------------------
+#* Figure S1 --------------------------------------------------------------------
+# Radar plots of scaled and inverted bias for quantifying systematic changes in
+# log-normally distributed data.
+layout_matrix <- matrix(c(
+  rep(1, 4), # row 1: Sensitivity title
+  2:5, # row 2: radar plots 1-4 Sensitivity
+  6:9, # row 3: radar plots 5-7 Sensitivity
+  rep(10, 4), # row 4: Specificity title
+  11:14, # row 5: radar plots 1-4 Specificity
+  15:18 # row 6: radar plots 5-7 Specificity
+), nrow = 6, byrow = TRUE)
+row_heights <- c(0.2, 1, 1, 0.2, 1, 1)
+
+radar_lognorm_samp <- res %>%
+  filter(distribution == "lognorm") %>%
+  group_by(change, algorithm, nobs_cat) %>%
+  summarise(
+    Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
+    MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_variance = mean(var_dif/sd_y, na.rm = TRUE),
+    MSE_variance = mean(var_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_MADM = mean(madm_dif/sd_y, na.rm = TRUE),
+    MSE_MADM = mean(madm_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
+    MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  # abs() is needed for bias and does not do harm for MSE
+  mutate(
+    across(
+      matches("^(Bias|MSE)"),
+      ~ 1 - scales::rescale(
+        abs(.x),
+        from = c(0, max(abs(.x), na.rm = TRUE))
+      )
+    )
+  )
+
+radar_lognorm_samp_bias <- radar_lognorm_samp %>%
+  select(change, algorithm, nobs_cat, starts_with("Bias_"))
+
+pdf("results/figures/FigS1_radar_lognorm_samp_bias.pdf",
+    width = 6.69, #unit: inches (equals 170mm)
+    height = 8 #maximum height: 225mm (8.85 in) for figure and legend
+)
+# Set up plotting area
+layout(layout_matrix, heights = row_heights)
+par(mar = c(1, 1, 1, 1), oma = c(1, 1, 1, 1), xpd = TRUE)
+
+## Sensitivity
+plot.new()
+text(0.5, 0.5, "Change", cex = 1.4, font = 2)
+
+# Loop through each method to plot
+for (i in 1:length(alg_labels)) {
+  alg <- unname(alg_labels[i])
+  temp <- radar_lognorm_samp_bias %>%
+    filter(algorithm == alg & change == "Change")
+  radar_lognorm_alg <- rbind(rep(1, 4), 
+                          rep(0, 4), 
+                          temp[, c(-1, -2, -3)])
+  rownames(radar_lognorm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
+  
+  fmsb::radarchart(
+    radar_lognorm_alg,
+    axistype = 1,
+    vlabels = est_labels_short,
+    pcol = nobs_col,
+    plty = 1:5,
+    plwd = 2,
+    cglcol = "grey",
+    cglty = 1,
+    axislabcol = "black",
+    caxislabels = c("0", "", "0.5", "", "1"),
+    calcex = 0.9,
+    vlcex = 0.9,
+    title = "",
+  )
+  
+  # Add method title
+  mtext(unname(alg_labels[i]), side = 3, line = -0.3, cex = 0.8, font = 2)
+}
+
+## Specificity
+plot.new() # to handle the missing 8. plot
+plot.new()
+text(0.5, 0.5, "No change", cex = 1.4, font = 2)
+
+# Loop through each method to plot
+for (i in 1:length(alg_labels)) {
+  alg <- unname(alg_labels[i])
+  temp <- radar_lognorm_samp_bias %>%
+    filter(algorithm == alg & change == "No change")
+  radar_lognorm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2, -3)])
+  rownames(radar_lognorm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
+  
+  fmsb::radarchart(
+    radar_lognorm_alg,
+    axistype = 1,
+    vlabels = est_labels_short,
+    pcol = nobs_col,
+    # pfcol = alpha(nobs_col, 0.2),
+    plty = 1:5,
+    plwd = 2,
+    cglcol = "grey",
+    cglty = 1,
+    axislabcol = "black",
+    caxislabels = c("0", "", "0.5", "", "1"),
+    calcex = 0.9,
+    vlcex = 0.9,
+    title = "",
+  )
+  
+  # Add method title
+  mtext(unname(alg_labels[i]), side = 3, line = -0.3, cex = 0.8, font = 2)
+}
+
+# Add legend for sample sizes
+plot.new()
+legend("center",
+       legend = unique(radar_lognorm_samp_bias$nobs_cat),
+       col = nobs_col,
+       lty = 1:5,
+       lwd = 2,
+       bty = "n",
+       cex = 0.8,
+       title = "Sample size",
+       title.font = 2
+)
+dev.off()
+
+
+#* Figure S2 --------------------------------------------------------------------
+# Radar plots of scaled and inverted MSE for quantifying systematic changes in
+# log-normally distributed data.
+layout_matrix <- matrix(c(
+  rep(1, 4), # row 1: Sensitivity title
+  2:5, # row 2: radar plots 1-4 Sensitivity
+  6:9, # row 3: radar plots 5-7 Sensitivity
+  rep(10, 4), # row 4: Specificity title
+  11:14, # row 5: radar plots 1-4 Specificity
+  15:18 # row 6: radar plots 5-7 Specificity
+), nrow = 6, byrow = TRUE)
+row_heights <- c(0.2, 1, 1, 0.2, 1, 1)
+
+radar_lognorm_samp <- res %>%
+  filter(distribution == "lognorm") %>%
+  group_by(change, algorithm, nobs_cat) %>%
+  summarise(
+    Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
+    MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_variance = mean(var_dif/sd_y, na.rm = TRUE),
+    MSE_variance = mean(var_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_MADM = mean(madm_dif/sd_y, na.rm = TRUE),
+    MSE_MADM = mean(madm_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
+    MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  # abs() is needed for bias and does not do harm for MSE
+  mutate(
+    across(
+      matches("^(Bias|MSE)"),
+      ~ 1 - scales::rescale(
+        abs(.x),
+        from = c(0, max(abs(.x), na.rm = TRUE))
+      )
+    )
+  )
+
+radar_lognorm_samp_mse <- radar_lognorm_samp %>%
+  select(change, algorithm, nobs_cat, starts_with("MSE_"))
+
+pdf("results/figures/FigS2_radar_lognorm_samp_mse.pdf",
+    width = 6.69, #unit: inches (equals 170mm)
+    height = 8 #maximum height: 225mm (8.85 in) for figure and legend
+)
+# Set up plotting area
+layout(layout_matrix, heights = row_heights)
+par(mar = c(1, 1, 1, 1), oma = c(1, 1, 1, 1), xpd = TRUE)
+
+## Sensitivity
+plot.new()
+text(0.5, 0.5, "Change", cex = 1.4, font = 2)
+
+# Loop through each method to plot
+for (i in 1:length(alg_labels)) {
+  alg <- unname(alg_labels[i])
+  temp <- radar_lognorm_samp_mse %>%
+    filter(algorithm == alg & change == "Change")
+  radar_lognorm_alg <- rbind(rep(1, 4), 
+                          rep(0, 4), 
+                          temp[, c(-1, -2, -3)])
+  rownames(radar_lognorm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
+  
+  fmsb::radarchart(
+    radar_lognorm_alg,
+    axistype = 1,
+    vlabels = est_labels_short,
+    pcol = nobs_col,
+    plty = 1:5,
+    plwd = 2,
+    cglcol = "grey",
+    cglty = 1,
+    axislabcol = "black",
+    caxislabels = c("0", "", "0.5", "", "1"),
+    calcex = 0.9,
+    vlcex = 0.9,
+    title = "",
+  )
+  
+  # Add method title
+  mtext(unname(alg_labels[i]), side = 3, line = -0.3, cex = 0.8, font = 2)
+}
+
+## Specificity
+plot.new() # to handle the missing 8. plot
+plot.new()
+text(0.5, 0.5, "No change", cex = 1.4, font = 2)
+
+# Loop through each method to plot
+for (i in 1:length(alg_labels)) {
+  alg <- unname(alg_labels[i])
+  temp <- radar_lognorm_samp_mse %>%
+    filter(algorithm == alg & change == "No change")
+  radar_lognorm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2, -3)])
+  rownames(radar_lognorm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
+  
+  fmsb::radarchart(
+    radar_lognorm_alg,
+    axistype = 1,
+    vlabels = est_labels_short,
+    pcol = nobs_col,
+    # pfcol = alpha(nobs_col, 0.2),
+    plty = 1:5,
+    plwd = 2,
+    cglcol = "grey",
+    cglty = 1,
+    axislabcol = "black",
+    caxislabels = c("0", "", "0.5", "", "1"),
+    calcex = 0.9,
+    vlcex = 0.9,
+    title = "",
+  )
+  
+  # Add method title
+  mtext(unname(alg_labels[i]), side = 3, line = -0.3, cex = 0.8, font = 2)
+}
+
+# Add legend for sample sizes
+plot.new()
+legend("center",
+       legend = unique(radar_lognorm_samp_mse$nobs_cat),
+       col = nobs_col,
+       lty = 1:5,
+       lwd = 2,
+       bty = "n",
+       cex = 0.8,
+       title = "Sample size",
+       title.font = 2
+)
+dev.off()
+
+
+#* Figure S3 -------------------------------------------------------------------
 # Heatmap of the bias for range by systematic change pattern across sample sizes
 # for normally distributed data.
 rangedat <- res %>%
@@ -938,10 +1340,10 @@ ggplot(rangedat[rangedat$distribution == "norm", ], aes(y = nobs_cat, x = algori
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS1_heatmap_bias_norm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS3_heatmap_bias_norm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S2 -------------------------------------------------------------------
+#* Figure S4 -------------------------------------------------------------------
 # Heatmap of the bias for variance by systematic change pattern across sample sizes
 # for normally distributed data.
 vardat <- res %>%
@@ -984,10 +1386,10 @@ ggplot(vardat[vardat$distribution == "norm", ], aes(y = nobs_cat, x = algorithm,
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS2_heatmap_bias_norm_var.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS4_heatmap_bias_norm_var.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S3 -------------------------------------------------------------------
+#* Figure S5 -------------------------------------------------------------------
 # Heatmap of the bias for mean absolute deviation around the median by systematic
 # change pattern across sample sizes for normally distributed data.
 madmdat <- res %>%
@@ -1030,10 +1432,10 @@ ggplot(madmdat[madmdat$distribution == "norm", ], aes(y = nobs_cat, x = algorith
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS3_heatmap_bias_norm_madm.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS5_heatmap_bias_norm_madm.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S4 -------------------------------------------------------------------
+#* Figure S6 -------------------------------------------------------------------
 # Heatmap of the bias for number of change points by systematic change pattern
 # across sample sizes for normally distributed data.
 ncptsdat <- res %>%
@@ -1076,10 +1478,10 @@ ggplot(ncptsdat[ncptsdat$distribution == "norm", ], aes(y = nobs_cat, x = algori
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS4_heatmap_bias_norm_ncpts.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS6_heatmap_bias_norm_ncpts.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S5 -------------------------------------------------------------------
+#* Figure S7 -------------------------------------------------------------------
 # Heatmap of the mean squared error for range by systematic change pattern across
 # sample sizes for normally distributed data.
 rangedat <- res %>%
@@ -1122,10 +1524,10 @@ ggplot(rangedat[rangedat$distribution == "norm", ], aes(y = nobs_cat, x = algori
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS5_heatmap_mse_norm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS7_heatmap_mse_norm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S6 -------------------------------------------------------------------
+#* Figure S8 -------------------------------------------------------------------
 # Heatmap of the mean squared error for variance by systematic change pattern
 # across sample sizes for normally distributed data.
 vardat <- res %>%
@@ -1168,10 +1570,10 @@ ggplot(vardat[vardat$distribution == "norm", ], aes(y = nobs_cat, x = algorithm,
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS6_heatmap_mse_norm_var.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS8_heatmap_mse_norm_var.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S7 -------------------------------------------------------------------
+#* Figure S9 -------------------------------------------------------------------
 # Heatmap of the mean squared error for mean absolute deviation around the median
 # by systematic change pattern across sample sizes for normally distributed data.
 madmdat <- res %>%
@@ -1214,10 +1616,10 @@ ggplot(madmdat[madmdat$distribution == "norm", ], aes(y = nobs_cat, x = algorith
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS7_heatmap_mse_norm_madm.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS9_heatmap_mse_norm_madm.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S8 -------------------------------------------------------------------
+#* Figure S10 -------------------------------------------------------------------
 # Heatmap of the mean squared error for number of change points by systematic
 # change pattern across sample sizes for normally distributed data.
 ncptsdat <- res %>%
@@ -1260,10 +1662,10 @@ ggplot(ncptsdat[ncptsdat$distribution == "norm", ], aes(y = nobs_cat, x = algori
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS8_heatmap_mse_norm_ncpts.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS10_heatmap_mse_norm_ncpts.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S9 -------------------------------------------------------------------
+#* Figure S11 -------------------------------------------------------------------
 # Heatmap of the bias for range by systematic change pattern across sample sizes
 # for log-normally distributed data.
 rangedat <- res %>%
@@ -1306,10 +1708,10 @@ ggplot(rangedat[rangedat$distribution == "lognorm", ], aes(y = nobs_cat, x = alg
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS9_heatmap_bias_lognorm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS10_heatmap_bias_lognorm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S10 ------------------------------------------------------------------
+#* Figure S12 ------------------------------------------------------------------
 # Heatmap of the bias for variance by systematic change pattern across sample sizes
 # for log-normally distributed data.
 vardat <- res %>%
@@ -1352,10 +1754,10 @@ ggplot(vardat[vardat$distribution == "lognorm", ], aes(y = nobs_cat, x = algorit
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS10_heatmap_bias_lognorm_var.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS12_heatmap_bias_lognorm_var.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S11 ------------------------------------------------------------------
+#* Figure S13 ------------------------------------------------------------------
 # Heatmap of the bias for mean absolute deviation around the median by systematic
 # change pattern across sample sizes for log-normally distributed data.
 madmdat <- res %>%
@@ -1398,10 +1800,10 @@ ggplot(madmdat[madmdat$distribution == "lognorm", ], aes(y = nobs_cat, x = algor
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS11_heatmap_bias_lognorm_madm.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS13_heatmap_bias_lognorm_madm.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S12 ------------------------------------------------------------------
+#* Figure S14 ------------------------------------------------------------------
 # Heatmap of the bias for number of change points by systematic change pattern
 # across sample sizes for log-normally distributed data.
 ncptsdat <- res %>%
@@ -1444,10 +1846,10 @@ ggplot(ncptsdat[ncptsdat$distribution == "lognorm", ], aes(y = nobs_cat, x = alg
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS12_heatmap_bias_lognorm_ncpts.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS14_heatmap_bias_lognorm_ncpts.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S13 ------------------------------------------------------------------
+#* Figure S15 ------------------------------------------------------------------
 # Heatmap of the mean squared error for range by systematic change pattern across
 # sample sizes for log-normally distributed data.
 rangedat <- res %>%
@@ -1490,10 +1892,10 @@ ggplot(rangedat[rangedat$distribution == "lognorm", ], aes(y = nobs_cat, x = alg
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS13_heatmap_mse_lognorm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS15_heatmap_mse_lognorm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S14 ------------------------------------------------------------------
+#* Figure S16 ------------------------------------------------------------------
 # Heatmap of the mean squared error for variance by systematic change pattern
 # across sample sizes for log-normally distributed data.
 vardat <- res %>%
@@ -1536,10 +1938,10 @@ ggplot(vardat[vardat$distribution == "lognorm", ], aes(y = nobs_cat, x = algorit
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS14_heatmap_mse_lognorm_var.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS16_heatmap_mse_lognorm_var.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S15 ------------------------------------------------------------------
+#* Figure S17 ------------------------------------------------------------------
 # Heatmap of the mean squared error for mean absolute deviation around the median
 # by systematic change pattern across sample sizes for log-normally distributed data.
 madmdat <- res %>%
@@ -1582,10 +1984,10 @@ ggplot(madmdat[madmdat$distribution == "lognorm", ], aes(y = nobs_cat, x = algor
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS15_heatmap_mse_lognorm_madm.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS17_heatmap_mse_lognorm_madm.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
-#* Figure S16 ------------------------------------------------------------------
+#* Figure S18 ------------------------------------------------------------------
 # Heatmap of the mean squared error for number of change points by systematic
 # change pattern across sample sizes for log-normally distributed data.
 ncptsdat <- res %>%
