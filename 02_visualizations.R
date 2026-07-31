@@ -124,6 +124,12 @@ dist_labels <- c(
   "lognorm" = "Log-normal"
 )
 
+# change
+change_labels <- c(
+  "No change", 
+  "Change"
+)
+
 # estimands
 est_labels <- c(
   "range" = "Range",
@@ -152,6 +158,13 @@ res <- res %>%
     algorithm,
     levels = names(alg_labels),
     labels = unname(alg_labels)
+  )) %>%
+  mutate(change = if_else(
+    grepl("nochange", problem), 0, 1)) %>%
+  mutate(change = factor(
+    change,
+    levels = c(0,1),
+    labels = change_labels
   )) %>%
   mutate(pattern = factor(
     pattern,
@@ -478,12 +491,12 @@ dev.off()
 # Tables -----------------------------------------------------------------------
 
 #* Table 2 ---------------------------------------------------------------------
-# Bias and mean squared error for quantifying systematic changes in normally
-# distributed data.
+# Sensitivity: Bias and mean squared error for quantifying systematic changes in
+# normally distributed data.
 
 # by sample size category
 sum_norm_bias_mse <- res %>%
-  filter(distribution == "norm") %>%
+  filter(distribution == "norm" & change == "Change") %>%
   group_by(nobs_cat, algorithm) %>%
   summarise(
     Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
@@ -499,7 +512,7 @@ sum_norm_bias_mse <- res %>%
 
 # aggregated across sample size categories
 sum_norm_bias_mse_agg <- res %>%
-  filter(distribution == "norm") %>%
+  filter(distribution == "norm" & change == "Change") %>%
   group_by(algorithm) %>%
   summarise(
     Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
@@ -574,17 +587,119 @@ print(latex_table2_norm,
   include.rownames = FALSE,
   booktabs = TRUE,
   sanitize.text.function = identity,
-  file = "results/tables/table2_norm.tex"
+  file = "results/tables/table2_norm_sens.tex"
+)
+
+#* Table 3 ---------------------------------------------------------------------
+# Specificity: Bias and mean squared error for quantifying systematic changes in 
+# normally distributed data.
+
+# by sample size category
+sum_norm_bias_mse <- res %>%
+  filter(distribution == "norm" & change == "No change") %>%
+  group_by(nobs_cat, algorithm) %>%
+  summarise(
+    Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
+    MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_variance = mean(var_dif/sd_y, na.rm = TRUE),
+    MSE_variance = mean(var_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_MADM = mean(madm_dif/sd_y, na.rm = TRUE),
+    MSE_MADM = mean(madm_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
+    MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# aggregated across sample size categories
+sum_norm_bias_mse_agg <- res %>%
+  filter(distribution == "norm" & change == "No change") %>%
+  group_by(algorithm) %>%
+  summarise(
+    Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
+    MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_variance = mean(var_dif/sd_y, na.rm = TRUE),
+    MSE_variance = mean(var_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_MADM = mean(madm_dif/sd_y, na.rm = TRUE),
+    MSE_MADM = mean(madm_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
+    MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(nobs_cat = "30-1000")
+
+# combine
+sum_norm_bias_mse <- sum_norm_bias_mse %>%
+  mutate(
+    nobs_cat = forcats::fct_expand(nobs_cat, "30–1000")
+  ) %>%
+  bind_rows(sum_norm_bias_mse_agg)
+
+# compute borda ranking as a summary measure
+sum_norm_bias_mse <- sum_norm_bias_mse %>%  
+  group_by(nobs_cat) %>%
+  mutate(across(
+    matches("^(Bias|MSE)"),
+    ~ rank(abs(.x), ties.method = "average"),
+    # abs() is needed for bias and does not do harm for MSE
+    .names = "{.col}_rank"
+  )) %>%
+  mutate(Bias_borda = rowSums(across(matches("^Bias.*_rank$"))),
+         Bias_borda_scale = (Bias_borda - 4*1) / (4*7 - 4*1), 
+         MSE_borda = rowSums(across(matches("^MSE.*_rank$"))),
+         MSE_borda_scale = (MSE_borda - 4*1) / (4*7 - 4*1) ) %>% 
+  ungroup() %>%
+  select(-c(ends_with("_rank"), "Bias_borda", "MSE_borda"))
+
+# highlight best values for latex output in bold
+sum_norm_bias_mse_highlighted <- sum_norm_bias_mse %>%
+  rename(
+    Sample_size = nobs_cat,
+    Method = algorithm
+  ) %>%
+  group_by(Sample_size) %>%
+  mutate(across(
+    .cols = matches("^(Bias|MSE)"),
+    .fns = ~ {
+      orig_vals <- round(.x, 2) # for display
+      abs_vals <- abs(orig_vals) # for highlighting
+      
+      # smaller-is-better columns
+      target_val <- min(abs_vals, na.rm = TRUE)
+      is_target <- abs_vals == target_val
+      
+      # highlight original values (not absolute!)
+      ifelse(
+        is_target,
+        paste0("\\textbf{", sprintf("%.2f", orig_vals), "}"),
+        sprintf("%.2f", orig_vals)
+      )
+    }
+  )) %>%
+  ungroup() %>%
+  mutate(
+    Sample_size = as.character(Sample_size),
+    Sample_size = replace(Sample_size, duplicated(Sample_size), "")
+  )
+
+latex_table3_norm <- xtable::xtable(sum_norm_bias_mse_highlighted, digits = 2)
+print(latex_table3_norm,
+      type = "latex",
+      include.rownames = FALSE,
+      booktabs = TRUE,
+      sanitize.text.function = identity,
+      file = "results/tables/table3_norm_spec.tex"
 )
 
 
-#* Table 3 ---------------------------------------------------------------------
-# Bias and mean squared error for quantifying systematic changes in log-normally
-# distributed data.
+# Suppl. tables ----------------------------------------------------------------
+
+#* Table  S1 ---------------------------------------------------------------------
+# Sensitivity: Bias and mean squared error for quantifying systematic changes in
+# log-normally distributed data.
 
 # by sample size category
 sum_lognorm_bias_mse <- res %>%
-  filter(distribution == "lognorm") %>%
+  filter(distribution == "lognorm" & change == "Change") %>%
   group_by(nobs_cat, algorithm) %>%
   summarise(
     Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
@@ -600,7 +715,7 @@ sum_lognorm_bias_mse <- res %>%
 
 # aggregated across sample size categories
 sum_lognorm_bias_mse_agg <- res %>%
-  filter(distribution == "lognorm") %>%
+  filter(distribution == "lognorm" & change == "Change") %>%
   group_by(algorithm) %>%
   summarise(
     Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
@@ -669,13 +784,113 @@ sum_lognorm_bias_mse_highlighted <- sum_lognorm_bias_mse %>%
     Sample_size = replace(Sample_size, duplicated(Sample_size), "")
   )
 
-latex_table3_lognorm <- xtable::xtable(sum_lognorm_bias_mse_highlighted, digits = 2)
-print(latex_table3_lognorm,
+latex_table4_lognorm <- xtable::xtable(sum_lognorm_bias_mse_highlighted, digits = 2)
+print(latex_table4_lognorm,
   type = "latex",
   include.rownames = FALSE,
   booktabs = TRUE,
   sanitize.text.function = identity,
-  file = "results/tables/table3_lognorm.tex"
+  file = "results/tables/tableS1_lognorm_sens.tex"
+)
+
+#* Table S2 ---------------------------------------------------------------------
+# Specificity: Bias and mean squared error for quantifying systematic changes in
+# log-normally distributed data.
+
+# by sample size category
+sum_lognorm_bias_mse <- res %>%
+  filter(distribution == "lognorm" & change == "No change") %>%
+  group_by(nobs_cat, algorithm) %>%
+  summarise(
+    Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
+    MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_variance = mean(var_dif/sd_y, na.rm = TRUE),
+    MSE_variance = mean(var_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_MADM = mean(madm_dif/sd_y, na.rm = TRUE),
+    MSE_MADM = mean(madm_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
+    MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# aggregated across sample size categories
+sum_lognorm_bias_mse_agg <- res %>%
+  filter(distribution == "lognorm" & change == "No change") %>%
+  group_by(algorithm) %>%
+  summarise(
+    Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
+    MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_variance = mean(var_dif/sd_y, na.rm = TRUE),
+    MSE_variance = mean(var_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_MADM = mean(madm_dif/sd_y, na.rm = TRUE),
+    MSE_MADM = mean(madm_dif^2/sd_y^2, na.rm = TRUE),
+    Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
+    MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(nobs_cat = "30-1000")
+
+# combine
+sum_lognorm_bias_mse <- sum_lognorm_bias_mse %>%
+  mutate(
+    nobs_cat = forcats::fct_expand(nobs_cat, "30–1000")
+  ) %>%
+  bind_rows(sum_lognorm_bias_mse_agg)
+
+# compute borda ranking as a summary measure
+sum_lognorm_bias_mse <- sum_lognorm_bias_mse %>%  
+  group_by(nobs_cat) %>%
+  mutate(across(
+    matches("^(Bias|MSE)"),
+    ~ rank(abs(.x), ties.method = "average"),  
+    # abs() is needed for bias and does not do harm for MSE
+    .names = "{.col}_rank"
+  )) %>%
+  mutate(Bias_borda = rowSums(across(matches("^Bias.*_rank$"))),
+         Bias_borda_scale = (Bias_borda - 4*1) / (4*7 - 4*1), 
+         MSE_borda = rowSums(across(matches("^MSE.*_rank$"))),
+         MSE_borda_scale = (MSE_borda - 4*1) / (4*7 - 4*1) ) %>% 
+  ungroup() %>%
+  select(-c(ends_with("_rank"), "Bias_borda", "MSE_borda"))
+
+# highlight best values for latex output in bold
+sum_lognorm_bias_mse_highlighted <- sum_lognorm_bias_mse %>%
+  rename(
+    Sample_size = nobs_cat,
+    Method = algorithm
+  ) %>%
+  group_by(Sample_size) %>%
+  mutate(across(
+    .cols = matches("^(Bias|MSE)"),
+    .fns = ~ {
+      orig_vals <- round(.x, 2) # for display
+      abs_vals <- abs(orig_vals) # for highlighting
+      
+      # smaller-is-better columns
+      target_val <- min(abs_vals, na.rm = TRUE)
+      is_target <- abs_vals == target_val
+      
+      # highlight original values (not absolute!)
+      ifelse(
+        is_target,
+        paste0("\\textbf{", sprintf("%.2f", orig_vals), "}"),
+        sprintf("%.2f", orig_vals)
+      )
+    }
+  )) %>%
+  ungroup() %>%
+  mutate(
+    Sample_size = as.character(Sample_size),
+    Sample_size = replace(Sample_size, duplicated(Sample_size), "")
+  )
+
+latex_table5_lognorm <- xtable::xtable(sum_lognorm_bias_mse_highlighted, digits = 2)
+print(latex_table5_lognorm,
+      type = "latex",
+      include.rownames = FALSE,
+      booktabs = TRUE,
+      sanitize.text.function = identity,
+      file = "results/tables/tableS2_lognorm_spec.tex"
 )
 
 
