@@ -832,7 +832,7 @@ sum_lognorm_bias_mse <- sum_lognorm_bias_mse %>%
   mutate(
     nobs_cat = forcats::fct_expand(nobs_cat, "30–1000")
   ) %>%
-  bind_rows(sum_norm_bias_mse_agg)
+  bind_rows(sum_lognorm_bias_mse_agg)
 
 # compute borda ranking as a summary measure
 sum_lognorm_bias_mse <- sum_lognorm_bias_mse %>%  
