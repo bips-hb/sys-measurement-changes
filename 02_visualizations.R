@@ -586,7 +586,7 @@ sum_norm_bias_mse_highlighted <- sum_norm_bias_mse %>%
   mutate(across(
     .cols = matches("^(Bias|MSE)") & !ends_with("_se"),
     .fns = ~ {
-      orig_vals <- round(.x, 1) # for display
+      orig_vals <- round(.x, 2) # for display
       abs_vals <- abs(orig_vals) # for highlighting
       
       # smaller-is-better columns
@@ -596,8 +596,8 @@ sum_norm_bias_mse_highlighted <- sum_norm_bias_mse %>%
       # highlight original values (not absolute!)
       ifelse(
         is_target,
-        paste0("\\textbf{", sprintf("%.1f", orig_vals), "}"),
-        sprintf("%.1f", orig_vals)
+        paste0("\\textbf{", sprintf("%.2f", orig_vals), "}"),
+        sprintf("%.2f", orig_vals)
       )
     }
   )) %>%
@@ -611,7 +611,7 @@ sum_norm_bias_mse_highlighted <- sum_norm_bias_mse %>%
 sum_norm_bias_highlighted <- sum_norm_bias_mse_highlighted %>% 
   select(-starts_with("MSE"))
 
-latex_table2_norm <- xtable::xtable(sum_norm_bias_highlighted, digits = 1)
+latex_table2_norm <- xtable::xtable(sum_norm_bias_highlighted, digits = 2)
 print(latex_table2_norm,
   type = "latex",
   include.rownames = FALSE,
@@ -624,7 +624,7 @@ print(latex_table2_norm,
 sum_norm_mse_highlighted <- sum_norm_bias_mse_highlighted %>% 
   select(-starts_with("Bias"))
 
-latex_tableS1_norm <- xtable::xtable(sum_norm_mse_highlighted, digits = 1)
+latex_tableS1_norm <- xtable::xtable(sum_norm_mse_highlighted, digits = 2)
 print(latex_tableS1_norm,
       type = "latex",
       include.rownames = FALSE,
@@ -722,7 +722,7 @@ sum_norm_bias_mse_highlighted <- sum_norm_bias_mse %>%
   mutate(across(
     .cols = matches("^(Bias|MSE)") & !ends_with("_se"),
     .fns = ~ {
-      orig_vals <- round(.x, 1) # for display
+      orig_vals <- round(.x, 2) # for display
       abs_vals <- abs(orig_vals) # for highlighting
       
       # smaller-is-better columns
@@ -732,8 +732,8 @@ sum_norm_bias_mse_highlighted <- sum_norm_bias_mse %>%
       # highlight original values (not absolute!)
       ifelse(
         is_target,
-        paste0("\\textbf{", sprintf("%.1f", orig_vals), "}"),
-        sprintf("%.1f", orig_vals)
+        paste0("\\textbf{", sprintf("%.2f", orig_vals), "}"),
+        sprintf("%.2f", orig_vals)
       )
     }
   )) %>%
@@ -747,7 +747,7 @@ sum_norm_bias_mse_highlighted <- sum_norm_bias_mse %>%
 sum_norm_bias_highlighted <- sum_norm_bias_mse_highlighted %>% 
   select(-starts_with("MSE"))
 
-latex_table3_norm <- xtable::xtable(sum_norm_bias_highlighted, digits = 3)
+latex_table3_norm <- xtable::xtable(sum_norm_bias_highlighted, digits = 2)
 print(latex_table3_norm,
       type = "latex",
       include.rownames = FALSE,
@@ -760,7 +760,7 @@ print(latex_table3_norm,
 sum_norm_mse_highlighted <- sum_norm_bias_mse_highlighted %>% 
   select(-starts_with("Bias"))
 
-latex_tableS2_norm <- xtable::xtable(sum_norm_mse_highlighted, digits = 3)
+latex_tableS2_norm <- xtable::xtable(sum_norm_mse_highlighted, digits = 2)
 print(latex_tableS2_norm,
       type = "latex",
       include.rownames = FALSE,
@@ -860,7 +860,7 @@ sum_lognorm_bias_mse_highlighted <- sum_lognorm_bias_mse %>%
   mutate(across(
     .cols = matches("^(Bias|MSE)") & !ends_with("_se"),
     .fns = ~ {
-      orig_vals <- round(.x, 1) # for display
+      orig_vals <- round(.x, 2) # for display
       abs_vals <- abs(orig_vals) # for highlighting
       
       # smaller-is-better columns
@@ -870,8 +870,8 @@ sum_lognorm_bias_mse_highlighted <- sum_lognorm_bias_mse %>%
       # highlight original values (not absolute!)
       ifelse(
         is_target,
-        paste0("\\textbf{", sprintf("%.1f", orig_vals), "}"),
-        sprintf("%.1f", orig_vals)
+        paste0("\\textbf{", sprintf("%.2f", orig_vals), "}"),
+        sprintf("%.2f", orig_vals)
       )
     }
   )) %>%
@@ -885,7 +885,7 @@ sum_lognorm_bias_mse_highlighted <- sum_lognorm_bias_mse %>%
 sum_lognorm_bias_highlighted <- sum_lognorm_bias_mse_highlighted %>% 
   select(-starts_with("MSE"))
 
-latex_tableS3_lognorm <- xtable::xtable(sum_lognorm_bias_highlighted, digits = 1)
+latex_tableS3_lognorm <- xtable::xtable(sum_lognorm_bias_highlighted, digits = 2)
 print(latex_tableS3_lognorm,
       type = "latex",
       include.rownames = FALSE,
@@ -898,7 +898,7 @@ print(latex_tableS3_lognorm,
 sum_lognorm_mse_highlighted <- sum_lognorm_bias_mse_highlighted %>% 
   select(-starts_with("Bias"))
 
-latex_tableS5_lognorm <- xtable::xtable(sum_lognorm_mse_highlighted, digits = 1)
+latex_tableS5_lognorm <- xtable::xtable(sum_lognorm_mse_highlighted, digits = 2)
 print(latex_tableS5_lognorm,
       type = "latex",
       include.rownames = FALSE,
@@ -996,7 +996,7 @@ sum_lognorm_bias_mse_highlighted <- sum_lognorm_bias_mse %>%
   mutate(across(
     .cols = matches("^(Bias|MSE)") & !ends_with("_se"),
     .fns = ~ {
-      orig_vals <- round(.x, 1) # for display
+      orig_vals <- round(.x, 2) # for display
       abs_vals <- abs(orig_vals) # for highlighting
       
       # smaller-is-better columns
@@ -1006,8 +1006,8 @@ sum_lognorm_bias_mse_highlighted <- sum_lognorm_bias_mse %>%
       # highlight original values (not absolute!)
       ifelse(
         is_target,
-        paste0("\\textbf{", sprintf("%.1f", orig_vals), "}"),
-        sprintf("%.1f", orig_vals)
+        paste0("\\textbf{", sprintf("%.2f", orig_vals), "}"),
+        sprintf("%.2f", orig_vals)
       )
     }
   )) %>%
@@ -1021,7 +1021,7 @@ sum_lognorm_bias_mse_highlighted <- sum_lognorm_bias_mse %>%
 sum_lognorm_bias_highlighted <- sum_lognorm_bias_mse_highlighted %>% 
   select(-starts_with("MSE"))
 
-latex_tableS4_lognorm <- xtable::xtable(sum_lognorm_bias_highlighted, digits = 3)
+latex_tableS4_lognorm <- xtable::xtable(sum_lognorm_bias_highlighted, digits = 2)
 print(latex_tableS4_lognorm,
       type = "latex",
       include.rownames = FALSE,
@@ -1034,7 +1034,7 @@ print(latex_tableS4_lognorm,
 sum_lognorm_mse_highlighted <- sum_lognorm_bias_mse_highlighted %>% 
   select(-starts_with("Bias"))
 
-latex_tableS6_norm <- xtable::xtable(sum_norm_mse_highlighted, digits = 3)
+latex_tableS6_norm <- xtable::xtable(sum_norm_mse_highlighted, digits = 2)
 print(latex_tableS6_norm,
       type = "latex",
       include.rownames = FALSE,
