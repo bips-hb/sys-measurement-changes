@@ -52,17 +52,27 @@ res_norm_bias_mse <- res %>%
   filter(distribution == "norm") %>%
   group_by(nobs_cat, pattern, dmaxf, snr, algorithm) %>%
   summarise(
-    Bias_range = mean(range_dif, na.rm = TRUE),
-    MSE_range = mean(range_dif^2, na.rm = TRUE),
-    Bias_variance = mean(var_dif, na.rm = TRUE),
-    MSE_variance = mean(var_dif^2, na.rm = TRUE),
-    Bias_MADM = mean(madm_dif, na.rm = TRUE),
-    MSE_MADM = mean(madm_dif^2, na.rm = TRUE),
-    Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
-    MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE)
+    N = n(),
+    Bias_range = mean(range_dif),
+    Bias_range_SE = sd(range_dif)/sqrt(n()),
+    MSE_range = mean(range_dif^2),
+    MSE_range_SE = sd(range_dif^2)/sqrt(n()),
+    Bias_variance = mean(var_dif),
+    Bias_variance_SE = sd(var_dif)/sqrt(n()),
+    MSE_variance = mean(var_dif^2),
+    MSE_variance_SE = sd(var_dif^2)/sqrt(n()),
+    Bias_MADM = mean(madm_dif),
+    Bias_MADM_SE = sd(madm_dif)/sqrt(n()),
+    MSE_MADM = mean(madm_dif^2),
+    MSE_MADM_SE = sd(madm_dif^2)/sqrt(n()),
+    Bias_NCP = mean(n_cpts_dif),
+    Bias_NCP_SE = sd(n_cpts_dif)/sqrt(n()),
+    MSE_NCP = mean(n_cpts_dif^2),
+    MSE_NCP_SE = sd(n_cpts_dif^2)/sqrt(n()),
+    .groups = "drop"
   ) %>%
   mutate(across(
-    matches("^(Bias|MSE)"),
+    matches("^(Bias|MSE)") & !ends_with("_SE"),
     ~ rank(abs(.x), ties.method = "average"),
     # abs() is needed for bias and does not do harm for MSE
     .names = "{.col}_rank"
@@ -87,17 +97,27 @@ res_lognorm_bias_mse <- res %>%
   filter(distribution == "lognorm") %>%
   group_by(nobs_cat, pattern, dmaxf, snr, algorithm) %>%
   summarise(
-    Bias_range = mean(range_dif, na.rm = TRUE),
-    MSE_range = mean(range_dif^2, na.rm = TRUE),
-    Bias_variance = mean(var_dif, na.rm = TRUE),
-    MSE_variance = mean(var_dif^2, na.rm = TRUE),
-    Bias_MADM = mean(madm_dif, na.rm = TRUE),
-    MSE_MADM = mean(madm_dif^2, na.rm = TRUE),
-    Bias_NCP = mean(n_cpts_dif, na.rm = TRUE),
-    MSE_NCP = mean(n_cpts_dif^2, na.rm = TRUE)
+    N = n(),
+    Bias_range = mean(range_dif),
+    Bias_range_SE = sd(range_dif)/sqrt(n()),
+    MSE_range = mean(range_dif^2),
+    MSE_range_SE = sd(range_dif^2)/sqrt(n()),
+    Bias_variance = mean(var_dif),
+    Bias_variance_SE = sd(var_dif)/sqrt(n()),
+    MSE_variance = mean(var_dif^2),
+    MSE_variance_SE = sd(var_dif^2)/sqrt(n()),
+    Bias_MADM = mean(madm_dif),
+    Bias_MADM_SE = sd(madm_dif)/sqrt(n()),
+    MSE_MADM = mean(madm_dif^2),
+    MSE_MADM_SE = sd(madm_dif^2)/sqrt(n()),
+    Bias_NCP = mean(n_cpts_dif),
+    Bias_NCP_SE = sd(n_cpts_dif)/sqrt(n()),
+    MSE_NCP = mean(n_cpts_dif^2),
+    MSE_NCP_SE = sd(n_cpts_dif^2)/sqrt(n()),
+    .groups = "drop"
   ) %>%
   mutate(across(
-    matches("^(Bias|MSE)"),
+    matches("^(Bias|MSE)") & !ends_with("_SE"),
     ~ rank(abs(.x), ties.method = "average"),  
     # abs() is needed for bias and does not do harm for MSE
     .names = "{.col}_rank"
@@ -128,10 +148,18 @@ dims_header <- openxlsx2::wb_dims(
   rows = 1,
   cols = seq_len(ncol(res_norm_bias_mse))
 )
+dims_num <- openxlsx2::wb_dims(
+  rows = 2:(nrow(res_norm_bias_mse) + 1),
+  cols = seq(7, ncol(res_norm_bias_mse), by=1)
+)
 wb <- openxlsx2::wb_add_worksheet(wb, "Normal Distribution") %>%
   openxlsx2::wb_add_data(
     sheet = "Normal Distribution",
     x = res_norm_bias_mse
+  ) %>%
+  openxlsx2::wb_add_numfmt(
+    dims = dims_num,
+    numfmt = "0.000"
   ) %>%
   openxlsx2::wb_add_fill(
     dims = dims_header,
