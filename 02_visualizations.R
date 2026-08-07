@@ -607,32 +607,31 @@ sum_norm_bias_mse_highlighted <- sum_norm_bias_mse %>%
     Sample_size = replace(Sample_size, duplicated(Sample_size), "")
   )
 
-## Table 2 (Bias)
-sum_norm_bias_highlighted <- sum_norm_bias_mse_highlighted %>% 
-  select(-starts_with("MSE"))
-
-latex_table2_norm <- xtable::xtable(sum_norm_bias_highlighted, digits = 2)
-print(latex_table2_norm,
-  type = "latex",
-  include.rownames = FALSE,
-  booktabs = TRUE,
-  sanitize.text.function = identity,
-  file = "results/tables/table2_norm_bias_sens.tex"
-)
-
-## Table S1 (MSE)
+## Table 2 (MSE)
 sum_norm_mse_highlighted <- sum_norm_bias_mse_highlighted %>% 
   select(-starts_with("Bias"))
 
-latex_tableS1_norm <- xtable::xtable(sum_norm_mse_highlighted, digits = 2)
+latex_table2_norm <- xtable::xtable(sum_norm_mse_highlighted, digits = 2)
+print(latex_table2_norm,
+      type = "latex",
+      include.rownames = FALSE,
+      booktabs = TRUE,
+      sanitize.text.function = identity,
+      file = "results/tables/table2_norm_mse_sens.tex"
+)
+
+## Table S1 (Bias)
+sum_norm_bias_highlighted <- sum_norm_bias_mse_highlighted %>% 
+  select(-starts_with("MSE"))
+
+latex_tableS1_norm <- xtable::xtable(sum_norm_bias_highlighted, digits = 2)
 print(latex_tableS1_norm,
       type = "latex",
       include.rownames = FALSE,
       booktabs = TRUE,
       sanitize.text.function = identity,
-      file = "results/tables/tableS1_norm_mse_sens.tex"
+      file = "results/tables/tableS1_norm_bias_sens.tex"
 )
-
 
 #* Table 3 & S2 ----------------------------------------------------------------
 # Specificity: Bias and mean squared error for quantifying systematic changes in 
@@ -743,36 +742,35 @@ sum_norm_bias_mse_highlighted <- sum_norm_bias_mse %>%
     Sample_size = replace(Sample_size, duplicated(Sample_size), "")
   )
 
-## Table 3 (Bias)
-sum_norm_bias_highlighted <- sum_norm_bias_mse_highlighted %>% 
-  select(-starts_with("MSE"))
+## Table 3 (MSE)
+sum_norm_mse_highlighted <- sum_norm_bias_mse_highlighted %>% 
+  select(-starts_with("Bias"))
 
-latex_table3_norm <- xtable::xtable(sum_norm_bias_highlighted, digits = 2)
+latex_table3_norm <- xtable::xtable(sum_norm_mse_highlighted, digits = 2)
 print(latex_table3_norm,
       type = "latex",
       include.rownames = FALSE,
       booktabs = TRUE,
       sanitize.text.function = identity,
-      file = "results/tables/table3_norm_bias_spec.tex"
+      file = "results/tables/table3_norm_mse_spec.tex"
 )
 
-## Table S2 (MSE)
-sum_norm_mse_highlighted <- sum_norm_bias_mse_highlighted %>% 
-  select(-starts_with("Bias"))
+## Table S2 (Bias)
+sum_norm_bias_highlighted <- sum_norm_bias_mse_highlighted %>% 
+  select(-starts_with("MSE"))
 
-latex_tableS2_norm <- xtable::xtable(sum_norm_mse_highlighted, digits = 2)
+latex_tableS2_norm <- xtable::xtable(sum_norm_bias_highlighted, digits = 2)
 print(latex_tableS2_norm,
       type = "latex",
       include.rownames = FALSE,
       booktabs = TRUE,
       sanitize.text.function = identity,
-      file = "results/tables/tableS2_norm_mse_spec.tex"
+      file = "results/tables/tableS2_norm_bias_spec.tex"
 )
-
 
 # Suppl. tables ----------------------------------------------------------------
 
-#* Table  S3 & S5 --------------------------------------------------------------
+#* Table  S3 & S4 --------------------------------------------------------------
 # Sensitivity: Bias and mean squared error for quantifying systematic changes in
 # log-normally distributed data.
 
@@ -881,34 +879,34 @@ sum_lognorm_bias_mse_highlighted <- sum_lognorm_bias_mse %>%
     Sample_size = replace(Sample_size, duplicated(Sample_size), "")
   )
 
-## Table S3 (Bias)
-sum_lognorm_bias_highlighted <- sum_lognorm_bias_mse_highlighted %>% 
-  select(-starts_with("MSE"))
+## Table S3 (MSE)
+sum_lognorm_mse_highlighted <- sum_lognorm_bias_mse_highlighted %>% 
+  select(-starts_with("Bias"))
 
-latex_tableS3_lognorm <- xtable::xtable(sum_lognorm_bias_highlighted, digits = 2)
+latex_tableS3_lognorm <- xtable::xtable(sum_lognorm_mse_highlighted, digits = 2)
 print(latex_tableS3_lognorm,
       type = "latex",
       include.rownames = FALSE,
       booktabs = TRUE,
       sanitize.text.function = identity,
-      file = "results/tables/tableS3_lognorm_bias_sens.tex"
+      file = "results/tables/tableS3_lognorm_mse_sens.tex"
 )
 
-## Table S5 (MSE)
-sum_lognorm_mse_highlighted <- sum_lognorm_bias_mse_highlighted %>% 
-  select(-starts_with("Bias"))
+## Table S4 (Bias)
+sum_lognorm_bias_highlighted <- sum_lognorm_bias_mse_highlighted %>% 
+  select(-starts_with("MSE"))
 
-latex_tableS5_lognorm <- xtable::xtable(sum_lognorm_mse_highlighted, digits = 2)
-print(latex_tableS5_lognorm,
+latex_tableS4_lognorm <- xtable::xtable(sum_lognorm_bias_highlighted, digits = 2)
+print(latex_tableS4_lognorm,
       type = "latex",
       include.rownames = FALSE,
       booktabs = TRUE,
       sanitize.text.function = identity,
-      file = "results/tables/tableS5_lognorm_mse_sens.tex"
+      file = "results/tables/tableS4_lognorm_bias_sens.tex"
 )
 
 
-#* Table S4 & S6 ---------------------------------------------------------------
+#* Table S5 & S6 ---------------------------------------------------------------
 # Specificity: Bias and mean squared error for quantifying systematic changes in
 # log-normally distributed data.
 
@@ -1017,30 +1015,30 @@ sum_lognorm_bias_mse_highlighted <- sum_lognorm_bias_mse %>%
     Sample_size = replace(Sample_size, duplicated(Sample_size), "")
   )
 
-## Table S4 (Bias)
-sum_lognorm_bias_highlighted <- sum_lognorm_bias_mse_highlighted %>% 
-  select(-starts_with("MSE"))
-
-latex_tableS4_lognorm <- xtable::xtable(sum_lognorm_bias_highlighted, digits = 2)
-print(latex_tableS4_lognorm,
-      type = "latex",
-      include.rownames = FALSE,
-      booktabs = TRUE,
-      sanitize.text.function = identity,
-      file = "results/tables/tableS4_lognorm_bias_spec.tex"
-)
-
-## Table S6 (MSE)
+## Table S5 (MSE)
 sum_lognorm_mse_highlighted <- sum_lognorm_bias_mse_highlighted %>% 
   select(-starts_with("Bias"))
 
-latex_tableS6_norm <- xtable::xtable(sum_norm_mse_highlighted, digits = 2)
-print(latex_tableS6_norm,
+latex_tableS5_lognorm <- xtable::xtable(sum_lognorm_mse_highlighted, digits = 2)
+print(latex_tableS5_lognorm,
       type = "latex",
       include.rownames = FALSE,
       booktabs = TRUE,
       sanitize.text.function = identity,
-      file = "results/tables/tableS6_norm_mse_spec.tex"
+      file = "results/tables/tableS5_lognorm_mse_spec.tex"
+)
+
+## Table S6 (Bias)
+sum_lognorm_bias_highlighted <- sum_lognorm_bias_mse_highlighted %>% 
+  select(-starts_with("MSE"))
+
+latex_tableS6_lognorm <- xtable::xtable(sum_lognorm_bias_highlighted, digits = 2)
+print(latex_tableS6_lognorm,
+      type = "latex",
+      include.rownames = FALSE,
+      booktabs = TRUE,
+      sanitize.text.function = identity,
+      file = "results/tables/tableS6_lognorm_bias_spec.tex"
 )
 
 
