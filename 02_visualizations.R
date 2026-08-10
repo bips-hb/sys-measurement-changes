@@ -233,15 +233,15 @@ ggsave("results/figures/Fig1_syschange.pdf", width = 170, height = 121, units = 
 
 
 #* Figure 2 --------------------------------------------------------------------
-# Radar plots of scaled and inverted bias for quantifying systematic changes in
-# normally distributed data.
+# Radar plots of scaled and inverted bias and MSE for quantifying systematic changes 
+# in normally distributed data in the presence of systematic changes.
 layout_matrix <- matrix(c(
-  rep(1, 4), # row 1: Sensitivity title
-  2:5, # row 2: radar plots 1-4 Sensitivity
-  6:9, # row 3: radar plots 5-7 Sensitivity
-  rep(10, 4), # row 4: Specificity title
-  11:14, # row 5: radar plots 1-4 Specificity
-  15:18 # row 6: radar plots 5-7 Specificity
+  rep(1, 4), # row 1: MSE title
+  2:5, # row 2: radar plots 1-4 MSE
+  6:9, # row 3: radar plots 5-7 MSE
+  rep(10, 4), # row 4: Bias title
+  11:14, # row 5: radar plots 1-4 Bias
+  15:18 # row 6: radar plots 5-7 Bias
 ), nrow = 6, byrow = TRUE)
 row_heights <- c(0.2, 1, 1, 0.2, 1, 1)
 
@@ -272,8 +272,10 @@ radar_norm_samp <- res %>%
 
 radar_norm_samp_bias <- radar_norm_samp %>%
   select(change, algorithm, nobs_cat, starts_with("Bias_"))
+radar_norm_samp_mse <- radar_norm_samp %>%
+  select(change, algorithm, nobs_cat, starts_with("MSE_"))
 
-pdf("results/figures/Fig2_radar_norm_samp_bias.pdf",
+pdf("results/figures/Fig2_radar_norm_samp_sens.pdf",
   width = 6.69, #unit: inches (equals 170mm)
   height = 8 #maximum height: 225mm (8.85 in) for figure and legend
 )
@@ -281,14 +283,14 @@ pdf("results/figures/Fig2_radar_norm_samp_bias.pdf",
 layout(layout_matrix, heights = row_heights)
 par(mar = c(1, 1, 1, 1), oma = c(1, 1, 1, 1), xpd = TRUE)
 
-## Sensitivity
+## MSE
 plot.new()
-text(0.5, 0.5, "Change", cex = 1.4, font = 2)
+text(0.5, 0.5, "MSE (scaled and inverted)", cex = 1.4, font = 2)
 
 # Loop through each method to plot
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
-  temp <- radar_norm_samp_bias %>%
+  temp <- radar_norm_samp_mse %>%
     filter(algorithm == alg & change == "Change")
   radar_norm_alg <- rbind(rep(1, 4), 
                           rep(0, 4), 
@@ -315,16 +317,16 @@ for (i in 1:length(alg_labels)) {
   mtext(unname(alg_labels[i]), side = 3, line = -0.3, cex = 0.8, font = 2)
 }
 
-## Specificity
+## Bias
 plot.new() # to handle the missing 8. plot
 plot.new()
-text(0.5, 0.5, "No change", cex = 1.4, font = 2)
+text(0.5, 0.5, "Bias magnitude (scaled and inverted)", cex = 1.4, font = 2)
 
 # Loop through each method to plot
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
   temp <- radar_norm_samp_bias %>%
-    filter(algorithm == alg & change == "No change")
+    filter(algorithm == alg & change == "Change")
   radar_norm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2, -3)])
   rownames(radar_norm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
 
@@ -365,15 +367,15 @@ dev.off()
 
 
 #* Figure 3 --------------------------------------------------------------------
-# Radar plots of scaled and inverted MSE for quantifying systematic changes in
-# normally distributed data.
+# Radar plots of scaled and inverted bias and MSE for quantifying systematic changes 
+# in normally distributed data in the absence of systematic changes.
 layout_matrix <- matrix(c(
-  rep(1, 4), # row 1: Sensitivity title
-  2:5, # row 2: radar plots 1-4 Sensitivity
-  6:9, # row 3: radar plots 5-7 Sensitivity
-  rep(10, 4), # row 4: Specificity title
-  11:14, # row 5: radar plots 1-4 Specificity
-  15:18 # row 6: radar plots 5-7 Specificity
+  rep(1, 4), # row 1: MSE title
+  2:5, # row 2: radar plots 1-4 MSE
+  6:9, # row 3: radar plots 5-7 MSE
+  rep(10, 4), # row 4: Bias title
+  11:14, # row 5: radar plots 1-4 Bias
+  15:18 # row 6: radar plots 5-7 Bias
 ), nrow = 6, byrow = TRUE)
 row_heights <- c(0.2, 1, 1, 0.2, 1, 1)
 
@@ -402,10 +404,12 @@ radar_norm_samp <- res %>%
     )
   )
 
+radar_norm_samp_bias <- radar_norm_samp %>%
+  select(change, algorithm, nobs_cat, starts_with("Bias_"))
 radar_norm_samp_mse <- radar_norm_samp %>%
   select(change, algorithm, nobs_cat, starts_with("MSE_"))
 
-pdf("results/figures/Fig3_radar_norm_samp_mse.pdf",
+pdf("results/figures/Fig3_radar_norm_samp_spec.pdf",
     width = 6.69, #unit: inches (equals 170mm)
     height = 8 #maximum height: 225mm (8.85 in) for figure and legend
 )
@@ -413,15 +417,15 @@ pdf("results/figures/Fig3_radar_norm_samp_mse.pdf",
 layout(layout_matrix, heights = row_heights)
 par(mar = c(1, 1, 1, 1), oma = c(1, 1, 1, 1), xpd = TRUE)
 
-## Sensitivity
+## MSE
 plot.new()
-text(0.5, 0.5, "Change", cex = 1.4, font = 2)
+text(0.5, 0.5, "MSE (scaled and inverted)", cex = 1.4, font = 2)
 
 # Loop through each method to plot
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
   temp <- radar_norm_samp_mse %>%
-    filter(algorithm == alg & change == "Change")
+    filter(algorithm == alg & change == "No change")
   radar_norm_alg <- rbind(rep(1, 4), 
                           rep(0, 4), 
                           temp[, c(-1, -2, -3)])
@@ -447,15 +451,15 @@ for (i in 1:length(alg_labels)) {
   mtext(unname(alg_labels[i]), side = 3, line = -0.3, cex = 0.8, font = 2)
 }
 
-## Specificity
+## Bias
 plot.new() # to handle the missing 8. plot
 plot.new()
-text(0.5, 0.5, "No change", cex = 1.4, font = 2)
+text(0.5, 0.5, "Bias magnitude (scaled and inverted)", cex = 1.4, font = 2)
 
 # Loop through each method to plot
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
-  temp <- radar_norm_samp_mse %>%
+  temp <- radar_norm_samp_bias %>%
     filter(algorithm == alg & change == "No change")
   radar_norm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2, -3)])
   rownames(radar_norm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
@@ -1044,15 +1048,15 @@ print(latex_tableS6_lognorm,
 
 # Suppl. figures ---------------------------------------------------------------
 #* Figure S1 --------------------------------------------------------------------
-# Radar plots of scaled and inverted bias for quantifying systematic changes in
-# log-normally distributed data.
+# Radar plots of scaled and inverted bias and MSE for quantifying systematic changes
+# in log-normally distributed data in the presence of systematic change.
 layout_matrix <- matrix(c(
-  rep(1, 4), # row 1: Sensitivity title
-  2:5, # row 2: radar plots 1-4 Sensitivity
-  6:9, # row 3: radar plots 5-7 Sensitivity
-  rep(10, 4), # row 4: Specificity title
-  11:14, # row 5: radar plots 1-4 Specificity
-  15:18 # row 6: radar plots 5-7 Specificity
+  rep(1, 4), # row 1: MSE title
+  2:5, # row 2: radar plots 1-4 MSE
+  6:9, # row 3: radar plots 5-7 MSE
+  rep(10, 4), # row 4: Bias title
+  11:14, # row 5: radar plots 1-4 Bias
+  15:18 # row 6: radar plots 5-7 Bias
 ), nrow = 6, byrow = TRUE)
 row_heights <- c(0.2, 1, 1, 0.2, 1, 1)
 
@@ -1083,8 +1087,10 @@ radar_lognorm_samp <- res %>%
 
 radar_lognorm_samp_bias <- radar_lognorm_samp %>%
   select(change, algorithm, nobs_cat, starts_with("Bias_"))
+radar_lognorm_samp_mse <- radar_lognorm_samp %>%
+  select(change, algorithm, nobs_cat, starts_with("MSE_"))
 
-pdf("results/figures/FigS1_radar_lognorm_samp_bias.pdf",
+pdf("results/figures/FigS1_radar_lognorm_samp_sens.pdf",
     width = 6.69, #unit: inches (equals 170mm)
     height = 8 #maximum height: 225mm (8.85 in) for figure and legend
 )
@@ -1092,14 +1098,14 @@ pdf("results/figures/FigS1_radar_lognorm_samp_bias.pdf",
 layout(layout_matrix, heights = row_heights)
 par(mar = c(1, 1, 1, 1), oma = c(1, 1, 1, 1), xpd = TRUE)
 
-## Sensitivity
+## MSE
 plot.new()
-text(0.5, 0.5, "Change", cex = 1.4, font = 2)
+text(0.5, 0.5, "MSE (scaled and inverted)", cex = 1.4, font = 2)
 
 # Loop through each method to plot
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
-  temp <- radar_lognorm_samp_bias %>%
+  temp <- radar_lognorm_samp_mse %>%
     filter(algorithm == alg & change == "Change")
   radar_lognorm_alg <- rbind(rep(1, 4), 
                           rep(0, 4), 
@@ -1126,16 +1132,16 @@ for (i in 1:length(alg_labels)) {
   mtext(unname(alg_labels[i]), side = 3, line = -0.3, cex = 0.8, font = 2)
 }
 
-## Specificity
+## Bias
 plot.new() # to handle the missing 8. plot
 plot.new()
-text(0.5, 0.5, "No change", cex = 1.4, font = 2)
+text(0.5, 0.5, "Bias magnitude (scaled and inverted)", cex = 1.4, font = 2)
 
 # Loop through each method to plot
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
   temp <- radar_lognorm_samp_bias %>%
-    filter(algorithm == alg & change == "No change")
+    filter(algorithm == alg & change == "Change")
   radar_lognorm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2, -3)])
   rownames(radar_lognorm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
   
@@ -1176,15 +1182,15 @@ dev.off()
 
 
 #* Figure S2 --------------------------------------------------------------------
-# Radar plots of scaled and inverted MSE for quantifying systematic changes in
-# log-normally distributed data.
+# Radar plots of scaled and inverted bias and MSE for quantifying systematic changes in
+# log-normally distributed data in the absence of systematic change.
 layout_matrix <- matrix(c(
-  rep(1, 4), # row 1: Sensitivity title
-  2:5, # row 2: radar plots 1-4 Sensitivity
-  6:9, # row 3: radar plots 5-7 Sensitivity
-  rep(10, 4), # row 4: Specificity title
-  11:14, # row 5: radar plots 1-4 Specificity
-  15:18 # row 6: radar plots 5-7 Specificity
+  rep(1, 4), # row 1: MSE title
+  2:5, # row 2: radar plots 1-4 MSE
+  6:9, # row 3: radar plots 5-7 MSE
+  rep(10, 4), # row 4: Bias title
+  11:14, # row 5: radar plots 1-4 Bias
+  15:18 # row 6: radar plots 5-7 Bias
 ), nrow = 6, byrow = TRUE)
 row_heights <- c(0.2, 1, 1, 0.2, 1, 1)
 
@@ -1213,10 +1219,12 @@ radar_lognorm_samp <- res %>%
     )
   )
 
+radar_lognorm_samp_bias <- radar_lognorm_samp %>%
+  select(change, algorithm, nobs_cat, starts_with("Bias_"))
 radar_lognorm_samp_mse <- radar_lognorm_samp %>%
   select(change, algorithm, nobs_cat, starts_with("MSE_"))
 
-pdf("results/figures/FigS2_radar_lognorm_samp_mse.pdf",
+pdf("results/figures/FigS2_radar_lognorm_samp_spec.pdf",
     width = 6.69, #unit: inches (equals 170mm)
     height = 8 #maximum height: 225mm (8.85 in) for figure and legend
 )
@@ -1224,15 +1232,15 @@ pdf("results/figures/FigS2_radar_lognorm_samp_mse.pdf",
 layout(layout_matrix, heights = row_heights)
 par(mar = c(1, 1, 1, 1), oma = c(1, 1, 1, 1), xpd = TRUE)
 
-## Sensitivity
+## MSE
 plot.new()
-text(0.5, 0.5, "Change", cex = 1.4, font = 2)
+text(0.5, 0.5, "MSE (scaled and inverted)", cex = 1.4, font = 2)
 
 # Loop through each method to plot
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
   temp <- radar_lognorm_samp_mse %>%
-    filter(algorithm == alg & change == "Change")
+    filter(algorithm == alg & change == "No change")
   radar_lognorm_alg <- rbind(rep(1, 4), 
                           rep(0, 4), 
                           temp[, c(-1, -2, -3)])
@@ -1258,15 +1266,15 @@ for (i in 1:length(alg_labels)) {
   mtext(unname(alg_labels[i]), side = 3, line = -0.3, cex = 0.8, font = 2)
 }
 
-## Specificity
+## Bias
 plot.new() # to handle the missing 8. plot
 plot.new()
-text(0.5, 0.5, "No change", cex = 1.4, font = 2)
+text(0.5, 0.5, "Bias magnitude (scaled and inverted)", cex = 1.4, font = 2)
 
 # Loop through each method to plot
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
-  temp <- radar_lognorm_samp_mse %>%
+  temp <- radar_lognorm_samp_bias %>%
     filter(algorithm == alg & change == "No change")
   radar_lognorm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2, -3)])
   rownames(radar_lognorm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
