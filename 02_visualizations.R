@@ -246,8 +246,8 @@ layout_matrix <- matrix(c(
 row_heights <- c(0.2, 1, 1, 0.2, 1, 1)
 
 radar_norm_samp <- res %>%
-  filter(distribution == "norm") %>%
-  group_by(change, algorithm, nobs_cat) %>%
+  filter(distribution == "norm" & change == "Change") %>%
+  group_by(algorithm, nobs_cat) %>%
   summarise(
     Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
     MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
@@ -271,9 +271,9 @@ radar_norm_samp <- res %>%
   )
 
 radar_norm_samp_bias <- radar_norm_samp %>%
-  select(change, algorithm, nobs_cat, starts_with("Bias_"))
+  select(algorithm, nobs_cat, starts_with("Bias_"))
 radar_norm_samp_mse <- radar_norm_samp %>%
-  select(change, algorithm, nobs_cat, starts_with("MSE_"))
+  select(algorithm, nobs_cat, starts_with("MSE_"))
 
 pdf("results/figures/Fig2_radar_norm_samp_sens.pdf",
   width = 6.69, #unit: inches (equals 170mm)
@@ -291,10 +291,10 @@ text(0.5, 0.5, "MSE (scaled and inverted)", cex = 1.4, font = 2)
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
   temp <- radar_norm_samp_mse %>%
-    filter(algorithm == alg & change == "Change")
+    filter(algorithm == alg)
   radar_norm_alg <- rbind(rep(1, 4), 
                           rep(0, 4), 
-                          temp[, c(-1, -2, -3)])
+                          temp[, c(-1, -2)])
   rownames(radar_norm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
 
   fmsb::radarchart(
@@ -326,8 +326,8 @@ text(0.5, 0.5, "Bias magnitude (scaled and inverted)", cex = 1.4, font = 2)
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
   temp <- radar_norm_samp_bias %>%
-    filter(algorithm == alg & change == "Change")
-  radar_norm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2, -3)])
+    filter(algorithm == alg)
+  radar_norm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2)])
   rownames(radar_norm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
 
   fmsb::radarchart(
@@ -380,8 +380,8 @@ layout_matrix <- matrix(c(
 row_heights <- c(0.2, 1, 1, 0.2, 1, 1)
 
 radar_norm_samp <- res %>%
-  filter(distribution == "norm") %>%
-  group_by(change, algorithm, nobs_cat) %>%
+  filter(distribution == "norm" & change == "No change") %>%
+  group_by(algorithm, nobs_cat) %>%
   summarise(
     Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
     MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
@@ -405,9 +405,9 @@ radar_norm_samp <- res %>%
   )
 
 radar_norm_samp_bias <- radar_norm_samp %>%
-  select(change, algorithm, nobs_cat, starts_with("Bias_"))
+  select(algorithm, nobs_cat, starts_with("Bias_"))
 radar_norm_samp_mse <- radar_norm_samp %>%
-  select(change, algorithm, nobs_cat, starts_with("MSE_"))
+  select(algorithm, nobs_cat, starts_with("MSE_"))
 
 pdf("results/figures/Fig3_radar_norm_samp_spec.pdf",
     width = 6.69, #unit: inches (equals 170mm)
@@ -425,10 +425,10 @@ text(0.5, 0.5, "MSE (scaled and inverted)", cex = 1.4, font = 2)
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
   temp <- radar_norm_samp_mse %>%
-    filter(algorithm == alg & change == "No change")
+    filter(algorithm == alg)
   radar_norm_alg <- rbind(rep(1, 4), 
                           rep(0, 4), 
-                          temp[, c(-1, -2, -3)])
+                          temp[, c(-1, -2)])
   rownames(radar_norm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
   
   fmsb::radarchart(
@@ -460,8 +460,8 @@ text(0.5, 0.5, "Bias magnitude (scaled and inverted)", cex = 1.4, font = 2)
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
   temp <- radar_norm_samp_bias %>%
-    filter(algorithm == alg & change == "No change")
-  radar_norm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2, -3)])
+    filter(algorithm == alg)
+  radar_norm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2)])
   rownames(radar_norm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
   
   fmsb::radarchart(
@@ -1061,8 +1061,8 @@ layout_matrix <- matrix(c(
 row_heights <- c(0.2, 1, 1, 0.2, 1, 1)
 
 radar_lognorm_samp <- res %>%
-  filter(distribution == "lognorm") %>%
-  group_by(change, algorithm, nobs_cat) %>%
+  filter(distribution == "lognorm" & change == "Change") %>%
+  group_by(algorithm, nobs_cat) %>%
   summarise(
     Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
     MSE_range = mean(range_dif^2/sd_y^2, na.rm = TRUE),
@@ -1086,9 +1086,9 @@ radar_lognorm_samp <- res %>%
   )
 
 radar_lognorm_samp_bias <- radar_lognorm_samp %>%
-  select(change, algorithm, nobs_cat, starts_with("Bias_"))
+  select(algorithm, nobs_cat, starts_with("Bias_"))
 radar_lognorm_samp_mse <- radar_lognorm_samp %>%
-  select(change, algorithm, nobs_cat, starts_with("MSE_"))
+  select(algorithm, nobs_cat, starts_with("MSE_"))
 
 pdf("results/figures/FigS1_radar_lognorm_samp_sens.pdf",
     width = 6.69, #unit: inches (equals 170mm)
@@ -1106,10 +1106,10 @@ text(0.5, 0.5, "MSE (scaled and inverted)", cex = 1.4, font = 2)
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
   temp <- radar_lognorm_samp_mse %>%
-    filter(algorithm == alg & change == "Change")
+    filter(algorithm == alg)
   radar_lognorm_alg <- rbind(rep(1, 4), 
                           rep(0, 4), 
-                          temp[, c(-1, -2, -3)])
+                          temp[, c(-1, -2)])
   rownames(radar_lognorm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
   
   fmsb::radarchart(
@@ -1141,8 +1141,8 @@ text(0.5, 0.5, "Bias magnitude (scaled and inverted)", cex = 1.4, font = 2)
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
   temp <- radar_lognorm_samp_bias %>%
-    filter(algorithm == alg & change == "Change")
-  radar_lognorm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2, -3)])
+    filter(algorithm == alg)
+  radar_lognorm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2)])
   rownames(radar_lognorm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
   
   fmsb::radarchart(
@@ -1195,7 +1195,7 @@ layout_matrix <- matrix(c(
 row_heights <- c(0.2, 1, 1, 0.2, 1, 1)
 
 radar_lognorm_samp <- res %>%
-  filter(distribution == "lognorm") %>%
+  filter(distribution == "lognorm" & change == "No change") %>%
   group_by(change, algorithm, nobs_cat) %>%
   summarise(
     Bias_range = mean(range_dif/sd_y, na.rm = TRUE),
@@ -1220,9 +1220,9 @@ radar_lognorm_samp <- res %>%
   )
 
 radar_lognorm_samp_bias <- radar_lognorm_samp %>%
-  select(change, algorithm, nobs_cat, starts_with("Bias_"))
+  select(algorithm, nobs_cat, starts_with("Bias_"))
 radar_lognorm_samp_mse <- radar_lognorm_samp %>%
-  select(change, algorithm, nobs_cat, starts_with("MSE_"))
+  select(algorithm, nobs_cat, starts_with("MSE_"))
 
 pdf("results/figures/FigS2_radar_lognorm_samp_spec.pdf",
     width = 6.69, #unit: inches (equals 170mm)
@@ -1240,10 +1240,10 @@ text(0.5, 0.5, "MSE (scaled and inverted)", cex = 1.4, font = 2)
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
   temp <- radar_lognorm_samp_mse %>%
-    filter(algorithm == alg & change == "No change")
+    filter(algorithm == alg)
   radar_lognorm_alg <- rbind(rep(1, 4), 
                           rep(0, 4), 
-                          temp[, c(-1, -2, -3)])
+                          temp[, c(-1, -2)])
   rownames(radar_lognorm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
   
   fmsb::radarchart(
@@ -1275,8 +1275,8 @@ text(0.5, 0.5, "Bias magnitude (scaled and inverted)", cex = 1.4, font = 2)
 for (i in 1:length(alg_labels)) {
   alg <- unname(alg_labels[i])
   temp <- radar_lognorm_samp_bias %>%
-    filter(algorithm == alg & change == "No change")
-  radar_lognorm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2, -3)])
+    filter(algorithm == alg)
+  radar_lognorm_alg <- rbind(rep(1, 4), rep(0, 4), temp[, c(-1, -2)])
   rownames(radar_lognorm_alg) <- c("Max", "Min", as.character(temp$nobs_cat))
   
   fmsb::radarchart(
