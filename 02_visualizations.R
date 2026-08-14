@@ -1496,7 +1496,7 @@ ggplot(ncptsdat[ncptsdat$distribution == "norm", ], aes(y = nobs_cat, x = algori
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS10_heatmap_mse_norm_ncpts.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS6_heatmap_mse_norm_ncpts.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S7 -------------------------------------------------------------------
@@ -1911,7 +1911,7 @@ ggplot(rangedat[rangedat$distribution == "lognorm", ], aes(y = nobs_cat, x = alg
     panel.spacing = unit(1, "lines"),
     strip.text = element_text(face = "bold")
   )
-ggsave("results/figures/FigS10_heatmap_bias_lognorm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
+ggsave("results/figures/FigS15_heatmap_bias_lognorm_range.pdf", width = 170, height = 200, units = "mm", bg = "white")
 
 
 #* Figure S16 ------------------------------------------------------------------
